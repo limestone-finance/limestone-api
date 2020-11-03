@@ -1,0 +1,36 @@
+{
+  "name": "@limestone/api",
+  "version": "0.0.1",
+  "description": "An api to access trusted token pricing data secured on Arweave and protected by provider's collateral. ",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx mocha --timeout 10000 index.test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jakub-wojciechowski/limestone-api.git"
+  },
+  "keywords": [
+    "price",
+    "tokens",
+    "arweave",
+    "api",
+    "oracle"
+  ],
+  "author": "Jakub Wojciechowski",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jakub-wojciechowski/limestone-api/issues"
+  },
+  "homepage": "https://github.com/jakub-wojciechowski/limestone-api#readme",
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
+    "chai-datetime": "^1.7.0",
+    "mocha": "^8.2.1"
+  },
+  "dependencies": {
+    "arql-ops": "^1.0.0",
+    "arweave": "^1.9.1"
+  }
+}
