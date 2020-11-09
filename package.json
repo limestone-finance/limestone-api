@@ -31,6 +31,7 @@
   },
   "dependencies": {
     "arql-ops": "^1.0.0",
-    "arweave": "^1.9.1"
+    "arweave": "^1.9.1",
+    "isomorphic-fetch": "^3.0.0"
   }
 }

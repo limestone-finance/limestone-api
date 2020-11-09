@@ -1,5 +1,6 @@
 const Arweave = require('arweave/node');
-const ARQL =  require('arql-ops');
+const ARQL = require('arql-ops');
+const fetch = require('isomorphic-fetch');
 
 const VERSION = "0.005";
 
@@ -11,14 +12,72 @@ const arweave = Arweave.init({
   logging: false,     // Enable network request logging
 });
 
-async function find(parameters) {
+async function findARQL(parameters) {
   let arqlParameters = Object.keys(parameters).reduce((acc, key) => {
     acc.push(ARQL.equals(key, parameters[key]));
     return acc;
   }, []);
-  let myQuery = ARQL.and(... arqlParameters);
+  let myQuery = ARQL.and(...arqlParameters);
   let results = await arweave.arql(myQuery);
   return results;
+}
+
+async function findGraphQL(parameters) {
+  let query = `{ transactions(
+  first: 1,
+  tags: [
+      { name: "app", values: ["${parameters.app}"] },
+      { name: "type", values: ["${parameters.type}"] },
+      { name: "version", values: ["${parameters.version}"] },
+      { name: "token", values: ["${parameters.token}"] }
+    ],
+    block: {min: 564000},
+    sort: HEIGHT_DESC
+    ) {
+      edges {
+        node {
+          id,
+          block {
+            height
+          },
+          tags {
+            name
+            value
+          }
+        }
+      }
+    }
+  }
+`;
+
+  let response = await fetch("https://arweave.dev/graphql", {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      query,
+    }),
+  });
+
+  let res = await response.json();
+  if (res.data) {
+    let tags = res.data.transactions.edges[0].node.tags;
+    let result = {};
+    tags.forEach(tag => {
+      if (tag.name === "value") {
+        result.price = parseFloat(tag.value);
+      }
+      if (tag.name === "time") {
+        result.updated = new Date(parseInt(tag.value))
+      }
+    });
+    return result;
+  } else {
+    throw Error("No data returned from Arweave Graph QL");
+  }
+
 }
 
 async function getTags(tx) {
@@ -38,7 +97,7 @@ async function getTags(tx) {
 
 async function getLatestData(token, txId, dataTxs) {
   if (!dataTxs) {
-    dataTxs = await find({app: "Limestone", type: "data-latest", version: VERSION, token: token});
+    dataTxs = await findARQL({app: "Limestone", type: "data-latest", version: VERSION, token: token});
   }
 
   let latestTx = dataTxs.length > txId ? dataTxs[txId] : null;
@@ -56,14 +115,14 @@ async function getLatestData(token, txId, dataTxs) {
 }
 
 module.exports = {
-  getPrice : async function (token) {
+  getPrice: async function (token) {
     if (typeof token !== "string") throw new TypeError("Please provide a token symbol as string.");
 
-    let latestData = await getLatestData(token, 0);
-
-    return {
-      price: parseFloat(latestData.value),
-      updated: new Date(parseInt(latestData.time))
-    };
+    return await await findGraphQL({
+      app: "Limestone",
+      type: "data-latest",
+      version: VERSION,
+      token: token
+    });
   }
 };
