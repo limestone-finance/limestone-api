@@ -12,17 +12,19 @@ const arweave = Arweave.init({
   logging: false,     // Enable network request logging
 });
 
-async function findARQL(parameters) {
-  let arqlParameters = Object.keys(parameters).reduce((acc, key) => {
-    acc.push(ARQL.equals(key, parameters[key]));
-    return acc;
-  }, []);
-  let myQuery = ARQL.and(...arqlParameters);
-  let results = await arweave.arql(myQuery);
-  return results;
+var recentHeight;
+
+async function getCurrentHeight() {
+  if (!recentHeight) {
+    let info = await arweave.network.getInfo();
+    recentHeight = parseInt(info.height);
+  }
+  return recentHeight;
 }
 
 async function findGraphQL(parameters) {
+  //We start browsing from last 100 blocks to speed up search time
+  let startBlock = (await getCurrentHeight()) - 100;
   let query = `{ transactions(
   first: 1,
   tags: [
@@ -31,7 +33,7 @@ async function findGraphQL(parameters) {
       { name: "version", values: ["${parameters.version}"] },
       { name: "token", values: ["${parameters.token}"] }
     ],
-    block: {min: 564000},
+    block: {min: ${startBlock}},
     sort: HEIGHT_DESC
     ) {
       edges {
@@ -78,40 +80,6 @@ async function findGraphQL(parameters) {
     throw Error("No data returned from Arweave Graph QL");
   }
 
-}
-
-async function getTags(tx) {
-  let transaction = await arweave.transactions.get(tx);
-  let tags = {};
-  try {
-    transaction.get('tags').forEach(tag => {
-      let key = tag.get('name', {decode: true, string: true});
-      let value = tag.get('value', {decode: true, string: true});
-      tags[key] = value;
-    });
-  } catch (error) {
-    console.log(error);
-  }
-  return tags;
-}
-
-async function getLatestData(token, txId, dataTxs) {
-  if (!dataTxs) {
-    dataTxs = await findARQL({app: "Limestone", type: "data-latest", version: VERSION, token: token});
-  }
-
-  let latestTx = dataTxs.length > txId ? dataTxs[txId] : null;
-
-  if (latestTx) {
-    let latestData = null;
-    try {
-      latestData = await getTags(latestTx);
-      return latestData;
-    } catch {
-      console.log("Cannot get tags trying: " + (txId+1));
-      return await getLatestData(token, txId+1, dataTxs);
-    }
-  }
 }
 
 module.exports = {
