@@ -52,7 +52,7 @@ async function findGraphQL(parameters) {
   }
 `;
 
-  let response = await fetch("https://arweave.dev/graphql", {
+  let response = await fetch("https://arweave.net/graphql", {
     method: 'POST',
     headers: {
       Accept: 'application/json',
@@ -77,7 +77,7 @@ async function findGraphQL(parameters) {
     });
     return result;
   } else {
-    throw Error("No data returned from Arweave Graph QL");
+    throw Error("No data returned from Arweave GraphQL");
   }
 
 }
