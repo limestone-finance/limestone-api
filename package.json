@@ -30,7 +30,7 @@
     "mocha": "^8.2.1"
   },
   "dependencies": {
-    "arweave": "^1.9.1",
+    "arweave": "^1.10.0",
     "isomorphic-fetch": "^3.0.0"
   }
 }
