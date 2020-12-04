@@ -1,5 +1,4 @@
 const Arweave = require('arweave/node');
-const ARQL = require('arql-ops');
 const fetch = require('isomorphic-fetch');
 
 const VERSION = "0.005";
