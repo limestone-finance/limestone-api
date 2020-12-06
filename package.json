@@ -32,6 +32,7 @@
     "prettier": "^2.2.1"
   },
   "dependencies": {
+    "ar-gql": "^0.0.3",
     "arweave": "^1.10.0",
     "isomorphic-fetch": "^3.0.0"
   }
