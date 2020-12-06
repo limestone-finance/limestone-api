@@ -1,4 +1,5 @@
 # limestone-api
+
 An api to access trusted token pricing data secured on Arweave and protected by provider's collateral.
 
 ## Usage
@@ -10,6 +11,7 @@ let price = await Api.getPrice("AR");
 ```
 
 ## Data format
+
 ```
 {
   price: 2.05, //as Float
@@ -23,4 +25,3 @@ let price = await Api.getPrice("AR");
 npm i
 npm test
 ```
-
