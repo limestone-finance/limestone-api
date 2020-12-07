@@ -4,7 +4,8 @@
   "description": "An api to access trusted token pricing data secured on Arweave and protected by provider's collateral. ",
   "main": "index.js",
   "scripts": {
-    "test": "npx mocha --timeout 10000 index.test.js"
+    "test": "npx mocha --timeout 10000 index.test.js",
+    "fmt": "prettier --write ."
   },
   "repository": {
     "type": "git",
@@ -27,10 +28,11 @@
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "chai-datetime": "^1.7.0",
-    "mocha": "^8.2.1"
+    "mocha": "^8.2.1",
+    "prettier": "^2.2.1"
   },
   "dependencies": {
-    "arweave": "^1.10.0",
-    "isomorphic-fetch": "^3.0.0"
+    "ar-gql": "^0.0.3",
+    "arweave": "^1.10.0"
   }
 }
