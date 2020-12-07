@@ -1,6 +1,8 @@
 const { run } = require("ar-gql");
 const Arweave = require("arweave/node");
 
+const VERSION = "0.005";
+
 const client = Arweave.init({
   host: "arweave.net",
   port: 443,
@@ -17,6 +19,7 @@ async function findGraphQL(parameters) {
           { name: "app", values: "Limestone" }
           { name: "type", values: "${parameters.type}" }
           { name: "token", values: "${parameters.token}" }
+          { name: "version", values: "${VERSION}" }
         ]
         block: { min: ${
           parseInt((await client.network.getInfo()).height) - 50
