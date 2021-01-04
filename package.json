@@ -28,6 +28,8 @@
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "chai-datetime": "^1.7.0",
+    "console-stamp": "^0.2.9",
+    "discord.js": "^12.5.1",
     "mocha": "^8.2.1",
     "prettier": "^2.2.1"
   },
