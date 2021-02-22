@@ -53,7 +53,7 @@ async function findGraphQL(parameters) {
     });
     return result;
   } else {
-    throw Error("Invalid data returned from Arweave.");
+    throw new Error("Invalid data returned from Arweave.");
   }
 }
 
@@ -62,7 +62,7 @@ module.exports = {
     if (typeof token !== "string")
       throw new TypeError("Please provide a token symbol as string.");
 
-    return await await findGraphQL({
+    return await findGraphQL({
       type: "data-latest",
       token,
     });

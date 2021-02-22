@@ -11,6 +11,12 @@ describe("simple api tests", function () {
     );
   });
 
+  it("should raise error if token is not a string", async function () {
+    await expect(Api.getPrice(123)).to.be.rejectedWith(
+      "Please provide a token symbol as string."
+    );
+  });
+
   it("should return sensible value as the price of Arweave token", async function () {
     let price = await Api.getPrice("AR");
     expect(price.price).to.greaterThan(0.1);
