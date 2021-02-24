@@ -5,7 +5,7 @@ const Discord = require('discord.js');
 const Limestone = require("../../index.js");
 const Client = new Discord.Client();
 
-Client.on('ready', async () => {
+Client.on("ready", async () => {
   let value = 0;
 
   Client.user.setActivity("powered by Limestone");
