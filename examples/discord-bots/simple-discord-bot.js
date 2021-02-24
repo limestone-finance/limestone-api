@@ -1,18 +1,18 @@
 // Format logs
-require('console-stamp')(console, '[HH:MM:ss.l]');
-const Discord = require('discord.js');
+require("console-stamp")(console, "[HH:MM:ss.l]");
+const Discord = require("discord.js");
 
 function runSimpleDiscordBot({ titleGetter, botToken, interval = 5000 }) {
   if (!botToken) {
-    throw new Error('Bot token is required to run discord bot');
+    throw new Error("Bot token is required to run discord bot");
   }
 
   const Client = new Discord.Client();
 
-  Client.on('ready', () => {
+  Client.on("ready", () => {
     // Setting subtitle (as an activity)
-    Client.user.setActivity('Limestone', {
-      type: 'LISTENING',
+    Client.user.setActivity("Limestone", {
+      type: "LISTENING",
     });
 
     setInterval(async () => {
@@ -26,7 +26,7 @@ function runSimpleDiscordBot({ titleGetter, botToken, interval = 5000 }) {
           guild.me.setNickname(title);
         });
       } catch (err) {
-        console.log('Error fetching title for discord bot:');
+        console.log("Error fetching title for discord bot:");
         console.log(err);
       }
     }, 5000);
