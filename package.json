@@ -34,7 +34,7 @@
     "prettier": "^2.2.1"
   },
   "dependencies": {
-    "ar-gql": "^0.0.3",
+    "ar-gql": "^0.0.6",
     "arweave": "^1.10.0"
   }
 }
