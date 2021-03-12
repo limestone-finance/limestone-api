@@ -1,70 +1,34 @@
-const { run } = require("ar-gql");
-const Arweave = require("arweave/node");
+import ArweaveProxy from "./proxies/arweave-proxy";
+import { LimestoneApiConfig, ProviderNameToAddress } from "./types";
 
-const VERSION = "0.005";
+const { version } = require('./package.json');
 
-const client = Arweave.init({
-  host: "arweave.net",
-  port: 443,
-  protocol: "https",
-});
 
-async function findGraphQL(parameters: any) {
-  const res = (
-    await run(
-      `
-    {
-      transactions(
-        tags: [
-          { name: "app", values: "Limestone" }
-          { name: "type", values: "${parameters.type}" }
-          { name: "token", values: "${parameters.token}" }
-          { name: "version", values: "${VERSION}" }
-        ]
-        block: { min: ${
-          parseInt((await client.network.getInfo()).height) - 50
-        } }
-        first: 1
-      ) {
-        edges {
-          node {
-            tags {
-              name
-              value
-            }
-          }
-        }
-      }
+export default class LimestoneApi {
+  useCache: boolean;
+  defaultProvider: string;
+  arweaveProxy: ArweaveProxy;
+
+  constructor(
+    defaultProvider: string,
+    useCache: boolean,
+    arweaveProxy: ArweaveProxy) {
+      this.defaultProvider = defaultProvider;
+      this.useCache = useCache;
+      this.arweaveProxy = arweaveProxy;
     }
-    `
-    )
-  ).data.transactions.edges;
 
-  if (res[0]) {
-    const tags = res[0].node.tags;
-    const result: any = {};
-    tags.forEach((tag: { name: string, value: string }) => {
-      if (tag.name === "value") {
-        result.price = parseFloat(tag.value);
-      }
-      if (tag.name === "time") {
-        result.updated = new Date(parseInt(tag.value));
-      }
-    });
-    return result;
-  } else {
-    throw new Error("Invalid data returned from Arweave.");
+  async init(config: LimestoneApiConfig): Promise<LimestoneApi> {
+    const arweave = new ArweaveProxy();
+    // const providerNameToAddress: ProviderNameToAddress =
+    //   await arweave.getProivderNameToAddressMapping();
+    return new LimestoneApi(
+      config.defaultProvider,
+      config.useCache,
+      arweave);
   }
-}
 
-module.exports = {
-  getPrice: async function (token: any) {
-    if (typeof token !== "string")
-      throw new TypeError("Please provide a token symbol as string.");
-
-    return await findGraphQL({
-      type: "data-latest",
-      token,
-    });
-  },
+  async getPrice() {
+    // TODO: implement
+  }
 };
