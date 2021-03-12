@@ -1,12 +1,11 @@
 import Arweave from "arweave/node";
 import { run } from "ar-gql";
-import { ProviderNameToAddressMapping } from "./types";
-
-const { version } = require('./package.json');
+// import { PriceData } from "../types";
 
 interface GraphQLParams {
   type: string;
-  token: string;
+  tokenSymbol: string;
+  version: string;
 };
 
 export default class ArweaveProxy {
@@ -20,21 +19,6 @@ export default class ArweaveProxy {
     });
   }
 
-  async getProivderNameToAddressMapping():
-    Promise<ProviderNameToAddressMapping> {
-      return {
-        "limestone-alex": "I-5rWUehEv-MjdK9gFw09RxfSLQX9DIHxG614Wf8qo0",
-      };
-    }
-
-  // TODO: update this function to support new bulk prices on arweave
-  async getPrice(tokenSymbol: string, opts: { provider:  }) {
-    return await findGraphQL({
-      type: "data",
-      tokenSymbol,
-    });
-  }
-
   async findGraphQL(parameters: GraphQLParams) {
     const res = (
       await run(
@@ -44,8 +28,8 @@ export default class ArweaveProxy {
           tags: [
             { name: "app", values: "Limestone" }
             { name: "type", values: "${parameters.type}" }
-            { name: "token", values: "${parameters.token}" }
-            { name: "version", values: "${version}" }
+            { name: "token", values: "${parameters.tokenSymbol}" }
+            { name: "version", values: "${parameters.version}" }
           ]
           block: { min: ${
             parseInt((await client.network.getInfo()).height) - 50
