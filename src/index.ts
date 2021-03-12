@@ -3,7 +3,7 @@ import ArweaveProxy from "./proxies/arweave-proxy";
 import CacheProxy from "./proxies/cache-proxy";
 import { LimestoneApiConfig, PriceData } from "./types";
 
-const { version } = require('./package.json');
+const { version } = require("../package.json") as { version: string };
 
 const LIMESTON_API_DEFAULTS = {
   provider: "limestone",
@@ -11,34 +11,35 @@ const LIMESTON_API_DEFAULTS = {
 };
 
 export default class LimestoneApi {
-  defaultProvider: string = LIMESTON_API_DEFAULTS.provider;
-  useCache: boolean = LIMESTON_API_DEFAULTS.useCache;
-  version: string = version;
+  defaultProvider: string;
+  useCache: boolean;
+  version: string;
   arweaveProxy: ArweaveProxy;
   cacheProxy: CacheProxy;
 
   constructor(opts: {
-    defaultProvider: string;
-    arweaveProxy: ArweaveProxy;
+    defaultProvider?: string;
     useCache?: boolean;
     version?: string;
+    arweaveProxy: ArweaveProxy;
   }) {
-    this.defaultProvider = opts.defaultProvider;
     this.arweaveProxy = opts.arweaveProxy;
     this.cacheProxy = new CacheProxy();
-    
-    if (opts.useCache !== undefined) {
-      this.useCache = opts.useCache;
-    }
 
-    if (opts.version !== undefined) {
-      this.version = opts.version;
-    }
+    this.defaultProvider = _.defaultTo(
+      opts.defaultProvider,
+      LIMESTON_API_DEFAULTS.provider);
+
+    this.useCache = _.defaultTo(
+      opts.useCache,
+      LIMESTON_API_DEFAULTS.useCache);
+
+    this.version = _.defaultTo(opts.version, version);
   }
 
   // Here we can pass any async code that we need to execute on api init
   // For example we can load provider name to address mapping here
-  static async init(config: LimestoneApiConfig): Promise<LimestoneApi> {
+  static init(config: LimestoneApiConfig = {}): LimestoneApi {
     const arweaveProxy = new ArweaveProxy();
     const optsToCopy = _.pick(config, [
       "defaultProvider",
@@ -54,11 +55,11 @@ export default class LimestoneApi {
 
   async getPrice(
     tokenSymbol: string,
-    opts: { provider: string }): Promise<PriceData | undefined> {
+    opts: { provider?: string } = {}): Promise<PriceData | undefined> {
       if (this.useCache) {
         return await this.cacheProxy.getPrice(
           tokenSymbol,
-          opts.provider || this.defaultProvider);
+          _.defaultTo(opts.provider, this.defaultProvider));
       } else {
         // TODO
         // update this function to support new bulk prices on arweave

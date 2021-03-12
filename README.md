@@ -1,27 +1,33 @@
-# limestone-api
+# Limestone API
 
 An api to access trusted token pricing data secured on Arweave and protected by provider's collateral.
 
 ## Usage
 
 ```
-const Api = require('@limestone/api');
+const LimestoneApi = require('@limestone/api');
 
-let price = await Api.getPrice("AR");
+const client = LimestoneApi.init();
+
+const price = client.getPrice("AR");
+
+console.log(price.value);
 ```
 
 ## Data format
 
+- TODO: udpate data format
+
 ```
 {
-  price: 2.05, //as Float
-  updated: '2020-11-03 16:00:00', //as Date
+  value: 2.05, // as Float
+  updated: '2020-11-03 16:00:00', // as Date
 }
 ```
 
 ## Building & testing
 
 ```
-npm i
-npm test
+yarn
+yarn test
 ```

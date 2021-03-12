@@ -1,6 +1,6 @@
 export interface LimestoneApiConfig {
-  useCache: boolean;
-  defaultProvider: string; // Name of default provider
+  useCache?: boolean;
+  defaultProvider?: string; // Name of default provider
   version?: string;
 };
 

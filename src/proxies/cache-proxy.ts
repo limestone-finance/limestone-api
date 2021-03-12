@@ -14,9 +14,10 @@ export default class CacheProxy {
     symbol: string,
     provider: string): Promise<PriceData | undefined> {
       const { data } = await axios.get(this.cacheApiUrl, {
-        "params": {
+        params: {
           symbol,
           provider,
+          limit: 1,
         }
       });
 
