@@ -4,7 +4,8 @@
   "description": "An api to access trusted token pricing data secured on Arweave and protected by provider's collateral. ",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --timeout 10000 index.test.js",
+    "build": "tsc",
+    "test": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha --timeout 10000 -r ts-node/register 'tests/**/*.ts'",
     "fmt": "prettier --write ."
   },
   "repository": {
@@ -25,16 +26,23 @@
   },
   "homepage": "https://github.com/jakub-wojciechowski/limestone-api#readme",
   "devDependencies": {
-    "chai": "^4.2.0",
+    "@types/node": "^14.14.33",
+    "chai": "^4.3.3",
     "chai-as-promised": "^7.1.1",
     "chai-datetime": "^1.7.0",
     "console-stamp": "^0.2.9",
     "discord.js": "^12.5.1",
-    "mocha": "^8.2.1",
-    "prettier": "^2.2.1"
+    "mocha": "^8.3.1",
+    "prettier": "^2.2.1",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.2.3"
   },
   "dependencies": {
     "ar-gql": "^0.0.6",
-    "arweave": "^1.10.0"
-  }
+    "arweave": "^1.10.0",
+    "axios": "^0.21.1"
+  },
+  "files": [
+    "lib/**/*"
+  ]
 }

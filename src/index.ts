@@ -9,7 +9,7 @@ const client = Arweave.init({
   protocol: "https",
 });
 
-async function findGraphQL(parameters) {
+async function findGraphQL(parameters: any) {
   const res = (
     await run(
       `
@@ -41,9 +41,9 @@ async function findGraphQL(parameters) {
   ).data.transactions.edges;
 
   if (res[0]) {
-    let tags = res[0].node.tags;
-    let result = {};
-    tags.forEach((tag) => {
+    const tags = res[0].node.tags;
+    const result: any = {};
+    tags.forEach((tag: { name: string, value: string }) => {
       if (tag.name === "value") {
         result.price = parseFloat(tag.value);
       }
@@ -58,7 +58,7 @@ async function findGraphQL(parameters) {
 }
 
 module.exports = {
-  getPrice: async function (token) {
+  getPrice: async function (token: any) {
     if (typeof token !== "string")
       throw new TypeError("Please provide a token symbol as string.");
 

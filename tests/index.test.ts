@@ -1,5 +1,5 @@
-const Api = require("./index.js");
-const chai = require("chai");
+const Api = require("../src/index");
+// const chai = require("chai");
 const expect = chai.expect;
 chai.use(require("chai-datetime"));
 chai.use(require("chai-as-promised"));
@@ -25,6 +25,7 @@ describe("simple api tests", function () {
 
   it("should return update time within last 20m", async function () {
     let price = await Api.getPrice("AR");
+    // @ts-ignore: chai typescript support is not perfect ;)
     expect(price.updated).closeToTime(new Date(), 20 * 60);
   });
 });
