@@ -10,6 +10,11 @@ const LIMESTON_API_DEFAULTS = {
   useCache: true,
 };
 
+interface GetPriceOptions {
+  provider?: string;
+  verifySignatire?: boolean; 
+};
+
 export default class LimestoneApi {
   defaultProvider: string;
   useCache: boolean;
@@ -55,11 +60,12 @@ export default class LimestoneApi {
 
   async getPrice(
     tokenSymbol: string,
-    opts: { provider?: string } = {}): Promise<PriceData | undefined> {
+    opts: GetPriceOptions = {}): Promise<PriceData | undefined> {
       if (this.useCache) {
-        return await this.cacheProxy.getPrice(
-          tokenSymbol,
-          _.defaultTo(opts.provider, this.defaultProvider));
+        return await this.cacheProxy.getPrice({
+          symbol: tokenSymbol,
+          provider: _.defaultTo(opts.provider, this.defaultProvider),
+        });
       } else {
         // TODO
         // update this function to support new bulk prices on arweave
@@ -74,10 +80,35 @@ export default class LimestoneApi {
 
   async getHistoricalPrice(
     tokenSymbol: string,
-    date: string // date in ISO 8601 format
-  ): Promise<PriceData[]> {
-    // TODO implement
-
-    return [];
+    date: Date,
+    opts: GetPriceOptions = {}): Promise<PriceData | undefined> {
+      if (this.useCache) {
+        return await this.cacheProxy.getPrice({
+          symbol: tokenSymbol,
+          provider: _.defaultTo(opts.provider, this.defaultProvider),
+          timestamp: date.getTime(),
+        });
+      } else {
+        throw new Error(
+          "Fetching historical price from arweave is not implemented yet");
+      }
   }
+
+  async getHistoricalPrices(
+    tokenSymbol: string,
+    startDate: Date,
+    endDate: Date,
+    opts: GetPriceOptions = {}): Promise<PriceData[]> {
+      if (this.useCache) {
+        return await this.cacheProxy.getManyPrices({
+          symbol: tokenSymbol,
+          provider: _.defaultTo(opts.provider, this.defaultProvider),
+          fromTimestamp: startDate.getTime(),
+          toTimestamp: endDate.getTime(),
+        });
+      } else {
+        throw new Error(
+          "Fetching historical prices from arweave is not implemented yet");
+      }
+    }
 };

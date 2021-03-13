@@ -1,5 +1,7 @@
 import LimestoneApi from "../src/index";
 
+// TODO: check if time is close to now
+
 describe("test getPrice method", () => {
   const limestonApiClient: LimestoneApi = LimestoneApi.init();
 

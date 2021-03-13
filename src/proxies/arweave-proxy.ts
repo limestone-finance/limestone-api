@@ -20,7 +20,7 @@ export default class ArweaveProxy {
   }
 
   async findGraphQL(parameters: GraphQLParams) {
-    const res = (
+  const res = (
       await run(
         `
       {
@@ -65,5 +65,10 @@ export default class ArweaveProxy {
     } else {
       throw new Error("Invalid data returned from Arweave.");
     }
+  }
+
+  // TODO implement
+  async verifySignature(data: string, signature: string): Promise<boolean> {
+    return true;
   }
 }

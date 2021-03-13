@@ -10,16 +10,27 @@ export default class CacheProxy {
     }
   }
 
-  async getPrice(
-    symbol: string,
-    provider: string): Promise<PriceData | undefined> {
-      const { data } = await axios.get(this.cacheApiUrl, {
-        params: {
-          symbol,
-          provider,
-          limit: 1,
-        }
-      });
+  async getPrice(args: {
+    symbol: string;
+    provider: string;
+    timestamp?: number; }): Promise<PriceData | undefined> {
+      const params: any = {
+        symbol: args.symbol,
+        provider: args.provider,
+        limit: 1,
+      };
+
+      // If timestamp is passed we fetch the first price
+      // with timestamp which is greater or equal to the passed one
+      if (args.timestamp !== undefined) {
+        params.fromTimestamp = args.timestamp;
+        params.sortAsc = true;
+      }
+
+      // TODO: remove
+      console.log({params});
+
+      const { data } = await axios.get(this.cacheApiUrl, { params });
 
       if (Array.isArray(data) && data.length == 1) {
         return data[0];
@@ -28,12 +39,12 @@ export default class CacheProxy {
       }
     }
 
-  async getManyPrices(
-    symbol: string,
-    fromTimestamp: number,
-    toTimestamp: number
-    ): Promise<PriceData[]> {
-      // TODO implement
-      return [];
+  async getManyPrices(args: {
+    symbol: string;
+    provider: string;
+    fromTimestamp: number;
+    toTimestamp: number }): Promise<PriceData[]> {
+      const { data } = await axios.get(this.cacheApiUrl, { params: args });
+      return data;
     }
 };
