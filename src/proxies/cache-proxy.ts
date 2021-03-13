@@ -27,9 +27,6 @@ export default class CacheProxy {
         params.sortAsc = true;
       }
 
-      // TODO: remove
-      console.log({params});
-
       const { data } = await axios.get(this.cacheApiUrl, { params });
 
       if (Array.isArray(data) && data.length == 1) {

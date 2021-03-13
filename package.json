@@ -39,7 +39,7 @@
   },
   "dependencies": {
     "ar-gql": "^0.0.6",
-    "arweave": "^1.10.0",
+    "arweave": "^1.10.11",
     "axios": "^0.21.1",
     "lodash": "^4.17.21"
   },

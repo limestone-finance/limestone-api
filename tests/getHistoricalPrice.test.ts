@@ -1,6 +1,6 @@
 import LimestoneApi from "../src/index";
 
-describe("test getHistoricalPrice method", () => {
+describe("Test getHistoricalPrice method", () => {
   const limestonApiClient: LimestoneApi = LimestoneApi.init();
 
   test("Should get AR price for 2021-03-12", async () => {

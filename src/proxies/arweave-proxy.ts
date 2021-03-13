@@ -1,6 +1,5 @@
 import Arweave from "arweave/node";
 import { run } from "ar-gql";
-// import { PriceData } from "../types";
 
 interface GraphQLParams {
   type: string;
@@ -67,8 +66,24 @@ export default class ArweaveProxy {
     }
   }
 
-  // TODO implement
-  async verifySignature(data: string, signature: string): Promise<boolean> {
-    return true;
-  }
+  async verifySignature(args: {
+    signedData: string;
+    signature: string;
+    signerPublicKey: string }): Promise<boolean> {
+      const signedBytes: Uint8Array =
+        new TextEncoder().encode(args.signedData);
+      const signatureBytes: Uint8Array =
+        Uint8Array.from(Buffer.from(args.signature, "base64"));
+
+      // TODO remove log
+      // console.log({
+      //   "signature -><-": Buffer.from(signatureBytes).toString("base64"),
+      //   "args.signature": args.signature,
+      // });
+
+      return await this.arweaveClient.crypto.verify(
+        args.signerPublicKey,
+        signedBytes,
+        signatureBytes);
+    }
 }
