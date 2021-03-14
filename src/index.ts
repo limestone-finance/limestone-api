@@ -110,8 +110,10 @@ export default class LimestoneApi {
 
         return price;
       } else {
+        // TODO: we cannot query ArGQL with timestamp camparators like timestamp_gt
+        // But in future we can think of querying based on block numbers
         throw new Error(
-          "Fetching historical price from arweave is not implemented yet");
+          "Fetching historical price from arweave is not supported");
       }
   }
 
@@ -121,15 +123,29 @@ export default class LimestoneApi {
     endDate: Date,
     opts: GetPriceOptions = {}): Promise<PriceData[]> {
       if (this.useCache) {
-        return await this.cacheProxy.getManyPrices({
+        const prices = await this.cacheProxy.getManyPrices({
           symbol: tokenSymbol,
           provider: _.defaultTo(opts.provider, this.defaultProvider),
           fromTimestamp: startDate.getTime(),
           toTimestamp: endDate.getTime(),
         });
+
+        // Signature verification for all prices
+        const shouldVerifySignature = _.defaultTo(
+          opts.verifySignature,
+          this.verifySignature);
+        if (shouldVerifySignature) {
+          for (const price of prices) {
+            await this.assertValidSignature(price);
+          }
+        }
+
+        return prices;
       } else {
+        // TODO: we cannot query ArGQL with timestamp camparators like timestamp_gt
+        // But in future we can think of querying based on block numbers
         throw new Error(
-          "Fetching historical prices from arweave is not implemented yet");
+          "Fetching historical prices from arweave is not supported");
       }
     }
 
@@ -149,16 +165,29 @@ export default class LimestoneApi {
       "permawebTx",
       "provider",
     ]));
+    const publicKey = String(price.providerPublicKey);
 
-    const valid = await this.arweaveProxy.verifySignature({
+    const validSignature = await this.arweaveProxy.verifySignature({
       signedData,
       signature: price.signature,
-      signerPublicKey: String(price.providerPublicKey),
+      signerPublicKey: publicKey,
     });
 
-    if (!valid) {
+    const addressFromPublicKey =
+      await this.arweaveProxy.arweaveClient.wallets.ownerToAddress(publicKey);
+
+    if (!validSignature) {
       throw new Error(
         "Signature verification failed for price: " + signedData);
+    }
+
+    // TODO: maybe we should think about error logs to limestone
+    // logs collector for being able to analyze and fix potential problems
+    if (addressFromPublicKey !== price.provider) {
+      throw new Error(
+        `Provider address doesn't match the public key.`
+        + ` Address: ${price.provider}.`
+        + ` Public key: ${publicKey}.`);
     }
   }
 };

@@ -3,6 +3,7 @@
     "^.+\\.(t|j)sx?$": "ts-jest"
   },
   "testEnvironment": "node",
+  "collectCoverage": true,
   "testRegex": "(/tests/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
   "moduleFileExtensions": [
     "ts",

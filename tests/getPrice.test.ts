@@ -29,7 +29,7 @@ describe("Test getPrice method", () => {
       verifySignature: true,
     });
 
-    // expect(price).toBeDefined();
+    expect(price).toBeDefined();
   });
   
 });

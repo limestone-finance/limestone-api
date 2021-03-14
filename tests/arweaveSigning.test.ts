@@ -17,7 +17,6 @@ describe("Test arweave signing and verification", () => {
     const signature = await arweaveClient.crypto.sign(jwk, dataToSign);
 
     // Verification
-    // const publicKey = address;
     const publicKey = jwk.n;
     const validSignature = await arweaveClient.crypto.verify(
       publicKey,

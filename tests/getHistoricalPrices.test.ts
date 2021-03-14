@@ -15,9 +15,22 @@ describe("Test getHistoricalPrices method", () => {
       endDate
     );
 
-    // TODO: remove this log later
-    // When tests will be fully automated
-    console.log("Historical AR prices", prices);
+    expect(prices).toBeDefined();
+    expect(prices.length).toBeGreaterThan(0);
+  });
+
+  test("Should get AR prices and verify signatures", async () => {
+    const symbol = "AR";
+
+    const startDate = new Date("2021-03-10");
+    const endDate = new Date("2021-03-15");
+
+    const prices: any = await limestonApiClient.getHistoricalPrices(
+      symbol,
+      startDate,
+      endDate,
+      { verifySignature: true }
+    );
 
     expect(prices).toBeDefined();
     expect(prices.length).toBeGreaterThan(0);
