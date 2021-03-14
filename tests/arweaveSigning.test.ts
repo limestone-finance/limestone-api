@@ -11,14 +11,6 @@ describe("Test arweave signing and verification", () => {
     const jwk = await arweaveClient.wallets.generate();
     const address = await arweaveClient.wallets.jwkToAddress(jwk);
 
-    // Create a transaction and print its owner
-    const transactionA = await arweaveClient.createTransaction({
-      data: "Hehe",
-    }, jwk);
-    console.log("JWK", jwk);
-    console.log("Addres: " + address);
-    console.log("Owner: " + transactionA.owner);
-
     // Signing
     const strToSign = "This is a test string data";
     const dataToSign = new TextEncoder().encode(strToSign);
@@ -32,8 +24,12 @@ describe("Test arweave signing and verification", () => {
       dataToSign,
       signature);
 
+    // Validating address
+    const addressFromOwner = await arweaveClient.wallets.ownerToAddress(publicKey);
+
     // Assertions
     expect(validSignature).toBeTruthy();
+    expect(addressFromOwner).toBe(address);
   });
 
 });

@@ -153,7 +153,7 @@ export default class LimestoneApi {
     const valid = await this.arweaveProxy.verifySignature({
       signedData,
       signature: price.signature,
-      signerPublicKey: price.provider,
+      signerPublicKey: String(price.providerPublicKey),
     });
 
     if (!valid) {

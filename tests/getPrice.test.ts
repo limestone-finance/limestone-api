@@ -25,9 +25,9 @@ describe("Test getPrice method", () => {
 
   test("Should verify signature for latest ETH price", async () => {
     const symbol = "ETH";
-    // const price = await limestonApiClient.getPrice(symbol, {
-    //   verifySignature: true,
-    // });
+    const price = await limestonApiClient.getPrice(symbol, {
+      verifySignature: true,
+    });
 
     // expect(price).toBeDefined();
   });

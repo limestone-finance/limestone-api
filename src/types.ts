@@ -15,6 +15,7 @@ export interface PriceData {
   version: string;
   source: string;
   timestamp: string;
+  providerPublicKey?: string;
 };
 
 export interface ProviderNameToAddressMapping {
