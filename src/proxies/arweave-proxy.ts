@@ -3,8 +3,12 @@ import { run } from "ar-gql";
 
 interface GraphQLParams {
   type: string;
-  tokenSymbol: string;
   version: string;
+  provider: string;
+};
+
+interface GetTxDataOpts {
+  parseJSON: boolean;
 };
 
 export default class ArweaveProxy {
@@ -18,51 +22,65 @@ export default class ArweaveProxy {
     });
   }
 
-  async findGraphQL(parameters: GraphQLParams) {
-  const res = (
-      await run(
-        `
-      {
-        transactions(
-          tags: [
-            { name: "app", values: "Limestone" }
-            { name: "type", values: "${parameters.type}" }
-            { name: "token", values: "${parameters.tokenSymbol}" }
-            { name: "version", values: "${parameters.version}" }
-          ]
-          block: { min: ${
-            parseInt((await client.network.getInfo()).height) - 50
-          } }
-          first: 1
-        ) {
-          edges {
-            node {
-              tags {
-                name
-                value
+  async findTxIdInGraphQL(
+    parameters: GraphQLParams): Promise<string | undefined> {
+      const networkInfo = await this.arweaveClient.network.getInfo();
+      const minBlock = networkInfo.height - 50;
+      const providerAddress =
+        await this.getAddressForProvider(parameters.provider);
+
+      const query = `
+        {
+          transactions(
+            tags: [
+              { name: "app", values: "Limestone" }
+              { name: "type", values: "${parameters.type}" }
+              { name: "version", values: "${parameters.version}" }
+            ]
+            block: { min: ${minBlock} }
+            owners: ["${providerAddress}"]
+            first: 1
+          ) {
+            edges {
+              node {
+                id
               }
             }
           }
-        }
+        }`;
+
+      const res = (await run(query)).data.transactions.edges;
+
+      if (res.length > 0) {
+        return res[0].node.id;
+      } else {
+        return undefined;
       }
-      `
-      )
-    ).data.transactions.edges;
-  
-    if (res[0]) {
-      const tags = res[0].node.tags;
-      const result: any = {};
-      tags.forEach((tag: { name: string, value: string }) => {
-        if (tag.name === "value") {
-          result.price = parseFloat(tag.value);
-        }
-        if (tag.name === "time") {
-          result.updated = new Date(parseInt(tag.value));
-        }
-      });
-      return result;
+    }
+
+  async getTxDataById(txId: string, opts?: GetTxDataOpts): Promise<any> {
+    const data =
+      await this.arweaveClient.transactions.getData(txId, { decode: true });
+    const strData = Arweave.utils.bufferToString(Buffer.from(data));
+
+    if (opts !== undefined && opts.parseJSON) {
+      return JSON.parse(strData);
     } else {
-      throw new Error("Invalid data returned from Arweave.");
+      return strData;
+    }
+  }
+
+  async getAddressForProvider(providerName: string): Promise<string> {
+    const mapping: { [name: string]: string } = {
+      "limestone": "I-5rWUehEv-MjdK9gFw09RxfSLQX9DIHxG614Wf8qo0",
+    };
+
+    const address = mapping[providerName];
+
+    if (address === undefined) {
+      throw new Error(`Provider address not found: ${providerName}`);
+    } else {
+      return String(address);
     }
   }
 
@@ -74,12 +92,6 @@ export default class ArweaveProxy {
         new TextEncoder().encode(args.signedData);
       const signatureBytes: Uint8Array =
         Uint8Array.from(Buffer.from(args.signature, "base64"));
-
-      // TODO remove log
-      // console.log({
-      //   "signature -><-": Buffer.from(signatureBytes).toString("base64"),
-      //   "args.signature": args.signature,
-      // });
 
       return await this.arweaveClient.crypto.verify(
         args.signerPublicKey,

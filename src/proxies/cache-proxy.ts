@@ -1,5 +1,5 @@
 import axios from "axios";
-import { PriceData } from "../types";
+import { PriceData, PriceDataWithSignature } from "../types";
 
 export default class CacheProxy {
   cacheApiUrl: string = "https://api.limestone.finance/prices";
@@ -13,7 +13,7 @@ export default class CacheProxy {
   async getPrice(args: {
     symbol: string;
     provider: string;
-    timestamp?: number; }): Promise<PriceData | undefined> {
+    timestamp?: number; }): Promise<PriceDataWithSignature | undefined> {
       const params: any = {
         symbol: args.symbol,
         provider: args.provider,
@@ -40,7 +40,7 @@ export default class CacheProxy {
     symbol: string;
     provider: string;
     fromTimestamp: number;
-    toTimestamp: number }): Promise<PriceData[]> {
+    toTimestamp: number }): Promise<PriceDataWithSignature[]> {
       const { data } = await axios.get(this.cacheApiUrl, { params: args });
       return data;
     }

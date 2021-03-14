@@ -1,7 +1,7 @@
 import _  from "lodash";
 import ArweaveProxy from "./proxies/arweave-proxy";
 import CacheProxy from "./proxies/cache-proxy";
-import { LimestoneApiConfig, PriceData } from "./types";
+import { LimestoneApiConfig, PriceData, PriceDataWithSignature } from "./types";
 
 const { version } = require("../package.json") as { version: string };
 
@@ -62,10 +62,12 @@ export default class LimestoneApi {
   async getPrice(
     tokenSymbol: string,
     opts: GetPriceOptions = {}): Promise<PriceData | undefined> {
+      const provider = _.defaultTo(opts.provider, this.defaultProvider);
+
       if (this.useCache) {
         const price = await this.cacheProxy.getPrice({
           symbol: tokenSymbol,
-          provider: _.defaultTo(opts.provider, this.defaultProvider),
+          provider,
         });
 
         // Signature verification
@@ -78,14 +80,29 @@ export default class LimestoneApi {
 
         return price;
       } else {
-        // TODO
-        // update this function to support new bulk prices on arweave
-        // implement support for provider filtering here
-        return await findGraphQL({
+        const txId = await this.arweaveProxy.findTxIdInGraphQL({
           type: "data",
-          tokenSymbol,
+          provider,
           version,
         });
+
+        if (txId === undefined) {
+          return undefined;
+        }
+
+        const prices = await this.arweaveProxy.getTxDataById(txId, {
+          parseJSON: true,
+        });
+
+        for (const price of prices) {
+          if (price.symbol === tokenSymbol) {
+            return {
+              ...price,
+              provider, // TODO: maybe we want to return provider address here
+              permawebTx: txId,
+            }
+          }
+        }
       }
     }
 
@@ -149,7 +166,7 @@ export default class LimestoneApi {
       }
     }
 
-  async assertValidSignature(price: PriceData): Promise<void> {
+  async assertValidSignature(price: PriceDataWithSignature): Promise<void> {
     // TODO: Maybe we can pass the signed string in broadcaster
     // to avoid potential problems with signature verification
 

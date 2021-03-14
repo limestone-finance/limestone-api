@@ -10,13 +10,16 @@ export interface PriceData {
   symbol: string;
   provider: string;
   value: string;
-  signature: string;
   permawebTx: string;
   version: string;
   source: string;
   timestamp: string;
-  providerPublicKey?: string;
 };
+
+export interface PriceDataWithSignature extends PriceData {
+  signature: string;
+  providerPublicKey?: string;
+}
 
 export interface ProviderNameToAddressMapping {
   [name: string]: string;
