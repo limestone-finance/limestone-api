@@ -198,8 +198,6 @@ export default class LimestoneApi {
         "Signature verification failed for price: " + signedData);
     }
 
-    // TODO: maybe we should think about error logs to limestone
-    // logs collector for being able to analyze and fix potential problems
     if (addressFromPublicKey !== price.provider) {
       throw new Error(
         `Provider address doesn't match the public key.`
