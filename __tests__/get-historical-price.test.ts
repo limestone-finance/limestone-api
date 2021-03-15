@@ -1,34 +1,34 @@
 import LimestoneApi from "../src/index";
 
 describe("Test getHistoricalPrice method", () => {
-  const limestonApiClient: LimestoneApi = LimestoneApi.init();
+  const limestoneApiClient: LimestoneApi = LimestoneApi.init();
 
-  test("Should get AR price for 2021-03-12", async () => {
+  test("Should get AR price for 2021-03-14", async () => {
     const symbol = "AR";
-    const date = new Date("2021-03-12");
+    const date = new Date("2021-03-14");
     const price: any =
-      await limestonApiClient.getHistoricalPrice(symbol, date);
+      await limestoneApiClient.getHistoricalPrice(symbol, date);
 
     expect(price).toBeDefined();
     expect(price.symbol).toBe(symbol);
-    expect(price.value).toBeGreaterThan(0.1);
+    expect(price.value).toBe(13.98);
   });
 
-  test("Should get ETH price for 2021-03-12", async () => {
+  test("Should get ETH price for 2021-03-14", async () => {
     const symbol = "ETH";
-    const date = new Date("2021-03-12");
+    const date = new Date("2021-03-14");
     const price: any =
-      await limestonApiClient.getHistoricalPrice(symbol, date);
+      await limestoneApiClient.getHistoricalPrice(symbol, date);
 
     expect(price).toBeDefined();
     expect(price.symbol).toBe(symbol);
-    expect(price.value).toBeGreaterThan(10);
+    expect(price.value).toBe(1741.16);
   });
 
-  test("Should get ETH price for 2021-03-12 and verify signature", async () => {
+  test("Should get ETH price for 2021-03-14 and verify signature", async () => {
     const symbol = "ETH";
-    const date = new Date("2021-03-12");
-    await limestonApiClient.getHistoricalPrice(symbol, date, {
+    const date = new Date("2021-03-14");
+    await limestoneApiClient.getHistoricalPrice(symbol, date, {
       verifySignature: true,
     });
   });

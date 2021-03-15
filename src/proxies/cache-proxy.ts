@@ -20,11 +20,10 @@ export default class CacheProxy {
         limit: 1,
       };
 
-      // If timestamp is passed we fetch the first price
-      // with timestamp which is greater or equal to the passed one
+      // If timestamp is passed we fetch the latest price
+      // with timestamp which is less or equal to the passed one
       if (args.timestamp !== undefined) {
-        params.fromTimestamp = args.timestamp;
-        params.sortAsc = true;
+        params.toTimestamp = args.timestamp;
       }
 
       const { data } = await axios.get(this.cacheApiUrl, { params });

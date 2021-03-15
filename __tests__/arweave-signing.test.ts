@@ -8,8 +8,9 @@ describe("Test arweave signing and verification", () => {
   });
 
   test("Should sign and verify signature", async () => {
+    // Keys generation
     const jwk = await arweaveClient.wallets.generate();
-    const address = await arweaveClient.wallets.jwkToAddress(jwk);
+    const publicKey = jwk.n;
 
     // Signing
     const strToSign = "This is a test string data";
@@ -17,18 +18,22 @@ describe("Test arweave signing and verification", () => {
     const signature = await arweaveClient.crypto.sign(jwk, dataToSign);
 
     // Verification
-    const publicKey = jwk.n;
     const validSignature = await arweaveClient.crypto.verify(
       publicKey,
       dataToSign,
       signature);
 
-    // Validating address
-    const addressFromOwner = await arweaveClient.wallets.ownerToAddress(publicKey);
-
-    // Assertions
     expect(validSignature).toBeTruthy();
-    expect(addressFromOwner).toBe(address);
   });
 
+  test("Should get address from owner", async () => {
+    // Keys generation
+    const jwk = await arweaveClient.wallets.generate();
+    const publicKey = jwk.n;
+
+    const address = await arweaveClient.wallets.jwkToAddress(jwk);
+    const addressFromOwner = await arweaveClient.wallets.ownerToAddress(publicKey);
+
+    expect(addressFromOwner).toBe(address);
+  });
 });

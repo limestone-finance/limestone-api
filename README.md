@@ -5,11 +5,9 @@ An api to access trusted token pricing data secured on Arweave and protected by 
 ## Usage
 
 ```
-const LimestoneApi = require('@limestone/api');
+const LimestoneApi = require('@limestone/api').init();
 
-const client = LimestoneApi.init();
-
-const price = client.getPrice("AR");
+const price = LimestoneApi.getPrice("AR");
 
 console.log(price.value);
 ```
