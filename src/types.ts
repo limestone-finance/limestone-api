@@ -6,13 +6,13 @@ export interface LimestoneApiConfig {
 };
 
 export interface PriceData {
-  id: string;
+  id?: string;
   symbol: string;
   provider: string;
   value: string;
   permawebTx: string;
   version: string;
-  source: string;
+  source?: string;
   timestamp: string;
 };
 

@@ -18,7 +18,8 @@ interface ProviderNameToDetailsMapping {
   }
 };
 
-const LAST_BLOCKS_TO_CHECK = 50;
+// TODO: revert LAST_BLOCKS_TO_CHECK to 50
+const LAST_BLOCKS_TO_CHECK = 5000;
 
 export default class ArweaveProxy {
   arweaveClient: Arweave;

@@ -5,9 +5,9 @@ An api to access trusted token pricing data secured on Arweave and protected by 
 ## Usage
 
 ```
-const LimestoneApi = require('@limestone/api').init();
+const limestone = require('@limestone/api');
 
-const price = LimestoneApi.getPrice("AR");
+const price = limestone.getPrice("AR");
 
 console.log(price.value);
 ```
@@ -19,7 +19,7 @@ console.log(price.value);
 ```
 {
   value: 2.05, // as Float
-  updated: '2020-11-03 16:00:00', // as Date
+  timestamp: "1615855810023", // as String
 }
 ```
 

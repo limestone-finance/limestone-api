@@ -1,13 +1,11 @@
-import LimestoneApi from "../src/index";
+import limestone from "../src/index";
 
 // TODO: check if time is close to now
 
 describe("Test getPrice method", () => {
-  const limestoneApiClient: LimestoneApi = LimestoneApi.init();
-
   test("Should get AR price", async () => {
     const symbol = "AR";
-    const price: any = await limestoneApiClient.getPrice(symbol);
+    const price: any = await limestone.getPrice(symbol);
 
     expect(price).toBeDefined();
     expect(price.symbol).toBe(symbol);
@@ -16,7 +14,7 @@ describe("Test getPrice method", () => {
 
   test("Should get ETH price", async () => {
     const symbol = "ETH";
-    const price: any = await limestoneApiClient.getPrice(symbol);
+    const price: any = await limestone.getPrice(symbol);
 
     expect(price).toBeDefined();
     expect(price.symbol).toBe(symbol);
@@ -25,7 +23,7 @@ describe("Test getPrice method", () => {
 
   test("Should verify signature for latest ETH price", async () => {
     const symbol = "ETH";
-    const price = await limestoneApiClient.getPrice(symbol, {
+    const price = await limestone.getPrice(symbol, {
       verifySignature: true,
     });
 

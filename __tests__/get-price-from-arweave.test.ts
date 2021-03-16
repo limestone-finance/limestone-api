@@ -1,4 +1,4 @@
-import LimestoneApi from "../src/index";
+import LimestoneApi from "../src/limestone-api";
 
 // TODO: check if time is close to now
 

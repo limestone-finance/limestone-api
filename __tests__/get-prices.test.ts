@@ -1,4 +1,4 @@
-import LimestoneApi from "../src/index";
+import limestone from "../src/index";
 
 // TODO: implement tests
 

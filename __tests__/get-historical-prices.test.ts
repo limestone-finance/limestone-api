@@ -1,15 +1,13 @@
-import LimestoneApi from "../src/index";
+import limestone from "../src/index";
 
 describe("Test getHistoricalPrices method", () => {
-  const limestoneApiClient: LimestoneApi = LimestoneApi.init();
-
   test("Should get AR prices", async () => {
     const symbol = "AR";
 
     const startDate = new Date("2021-03-10");
     const endDate = new Date("2021-03-15");
 
-    const prices: any = await limestoneApiClient.getHistoricalPrices(
+    const prices: any = await limestone.getHistoricalPrices(
       symbol,
       startDate,
       endDate
@@ -27,7 +25,7 @@ describe("Test getHistoricalPrices method", () => {
     const startDate = new Date("2021-03-10");
     const endDate = new Date("2021-03-15");
 
-    const prices: any = await limestoneApiClient.getHistoricalPrices(
+    const prices: any = await limestone.getHistoricalPrices(
       symbol,
       startDate,
       endDate,
