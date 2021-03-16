@@ -73,7 +73,7 @@ export default class LimestoneApi {
   async getPrice(symbol: string,
     opts?: GetPriceOptions): Promise<PriceData | undefined>;
   async getPrice(symbols: string[],
-    opts?: GetPriceOptions): Promise<PriceData[]>;
+    opts?: GetPriceOptions): Promise<{ [token: string]: PriceData }>;
   async getPrice(symbolOrSymbols: any,
     opts: GetPriceOptions = {}): Promise<any> {
     const provider = _.defaultTo(opts.provider, this.defaultProvider);
@@ -101,7 +101,7 @@ export default class LimestoneApi {
   async getHistoricalPrice(symbol: string,
     opts: GetHistoricalPriceForIntervalOptions): Promise<PriceData[]>;
   async getHistoricalPrice(symbols: string[],
-    opts: GetHistoricalPriceOptions): Promise<PriceData[]>;
+    opts: GetHistoricalPriceOptions): Promise<{ [token: string]: PriceData }>;
   async getHistoricalPrice(symbolOrSymbols: any, opts: any): Promise<any> {
     const provider = _.defaultTo(opts.provider, this.defaultProvider);
     const shouldVerifySignature = _.defaultTo(
@@ -168,14 +168,24 @@ export default class LimestoneApi {
     symbols: string[],
     provider: string,
     shouldVerifySignature: boolean,
-  }): Promise<PriceData[]> {
+  }): Promise<{ [token: string]: PriceData }> {
+    // Fetching prices
+    let prices = [];
     if (this.useCache) {
-      return await this.cacheProxy.getPriceForManyTokens(
+      prices = await this.cacheProxy.getPriceForManyTokens(
         _.pick(args, ["symbols", "provider"]));
     } else {
       const allPrices = await this.getPricesFromArweave(args.provider);
-      return allPrices.filter(p => args.symbols.includes(p.symbol));
+      prices = allPrices.filter(p => args.symbols.includes(p.symbol));
     }
+
+    // Building prices object from array
+    const pricesObj: { [token: string]: PriceData } = {};
+    for (const price of prices) {
+      pricesObj[price.symbol] = price;
+    }
+
+    return pricesObj;
   }
 
   private async getPricesFromArweave(provider: string): Promise<PriceData[]> {
