@@ -158,6 +158,17 @@ export default class LimestoneApi {
       return price;
     } else {
       // Getting price from arweave
+
+      // Try to get price from graphql if possible
+      if (args.symbol === "AR") {
+        const price = await this.tryToGetPriceFromGQL(
+          _.pick(args, ["provider", "symbol"]));
+        if (price !== undefined) {
+          return price;
+        }
+      }
+
+      // Getting price from arweave in a "standard" way (from data)
       const prices = await this.getPricesFromArweave(args.provider);
       const priceForSymbol = prices.find(p => p.symbol === args.symbol);
       return priceForSymbol;
@@ -189,25 +200,26 @@ export default class LimestoneApi {
   }
 
   private async getPricesFromArweave(provider: string): Promise<PriceData[]> {
-    const txId = await this.arweaveProxy.findTxIdInGraphQL({
+    const { address } = await this.arweaveProxy.getProviderDetails(provider);
+
+    const gqlResponse = await this.arweaveProxy.findPricesInGraphQL({
       type: "data",
-      provider,
+      providerAddress: address,
       version: this.version,
     });
 
-    if (txId === undefined) {
+    if (gqlResponse === undefined) {
       return [];
     }
 
-    const prices = await this.arweaveProxy.getTxDataById(txId, {
-      parseJSON: true,
-    });
+    const prices = await this.arweaveProxy.getTxDataById(
+      gqlResponse.permawebTx, { parseJSON: true });
 
     return prices.map((price: any) => {
       return {
         ...price,
-        provider, // TODO: maybe we want to return provider address here
-        permawebTx: txId,
+        provider: address,
+        permawebTx: gqlResponse.permawebTx,
       }
     });
   }
@@ -233,6 +245,33 @@ export default class LimestoneApi {
       // But in future we can think of querying based on block numbers
       throw new Error(
         "Fetching historical price from arweave is not supported");
+    }
+  }
+
+  private async tryToGetPriceFromGQL(args: {
+    symbol: string,
+    provider: string,
+  }): Promise<PriceData | undefined> {
+    const { address } =
+      await this.arweaveProxy.getProviderDetails(args.provider);
+
+    const response = await this.arweaveProxy.findPricesInGraphQL({
+      type: "data",
+      providerAddress: address,
+      version: this.version,
+    });
+
+    if (response === undefined || response.tags[args.symbol] === undefined) {
+      return undefined;
+    } else {
+      return {
+        symbol: args.symbol,
+        value: Number(response.tags[args.symbol]),
+        permawebTx: response.permawebTx,
+        timestamp: Number(response.tags.timestamp),
+        provider: address,
+        version: response.tags.version,
+      };
     }
   }
 

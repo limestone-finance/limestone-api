@@ -4,7 +4,16 @@ import { run } from "ar-gql";
 interface GraphQLParams {
   type: string;
   version: string;
-  provider: string;
+  providerAddress: string;
+};
+
+interface GraphQLResponse {
+  permawebTx: string;
+  tags: TagsObj;
+};
+
+interface TagsObj {
+  [name: string]: string;
 };
 
 interface GetTxDataOpts {
@@ -12,10 +21,12 @@ interface GetTxDataOpts {
 };
 
 interface ProviderNameToDetailsMapping {
-  [providerName: string]: {
-    address: string;
-    publicKey: string;
-  }
+  [providerName: string]: ProviderDetails;
+};
+
+interface ProviderDetails {
+  address: string;
+  publicKey: string;
 };
 
 // TODO: revert LAST_BLOCKS_TO_CHECK to 50
@@ -32,12 +43,10 @@ export default class ArweaveProxy {
     });
   }
 
-  async findTxIdInGraphQL(
-    parameters: GraphQLParams): Promise<string | undefined> {
+  async findPricesInGraphQL(
+    parameters: GraphQLParams): Promise<GraphQLResponse | undefined> {
       const networkInfo = await this.arweaveClient.network.getInfo();
       const minBlock = networkInfo.height - LAST_BLOCKS_TO_CHECK;
-      const providerAddress =
-        await this.getAddressForProvider(parameters.provider);
 
       const query = `
         {
@@ -48,11 +57,15 @@ export default class ArweaveProxy {
               { name: "version", values: "${parameters.version}" }
             ]
             block: { min: ${minBlock} }
-            owners: ["${providerAddress}"]
+            owners: ["${parameters.providerAddress}"]
             first: 1
           ) {
             edges {
               node {
+                tags {
+                  name
+                  value
+                }
                 id
               }
             }
@@ -62,7 +75,18 @@ export default class ArweaveProxy {
       const res = (await run(query)).data.transactions.edges;
 
       if (res.length > 0) {
-        return res[0].node.id;
+        const node = res[0].node;
+
+        // Converting name, value array to tags object
+        const tags: TagsObj = {};
+        for (const { name, value } of node.tags) {
+          tags[name] = value;
+        }
+
+        return {
+          permawebTx: node.id,
+          tags,
+        };
       } else {
         return undefined;
       }
@@ -80,7 +104,7 @@ export default class ArweaveProxy {
     }
   }
 
-  async getAddressForProvider(providerName: string): Promise<string> {
+  async getProviderDetails(providerName: string): Promise<ProviderDetails> {
     const mapping: ProviderNameToDetailsMapping = {
       "limestone": {
         address: "I-5rWUehEv-MjdK9gFw09RxfSLQX9DIHxG614Wf8qo0",
@@ -89,9 +113,9 @@ export default class ArweaveProxy {
     };
 
     if (mapping[providerName] === undefined) {
-      throw new Error(`Provider address not found: ${providerName}`);
+      throw new Error(`Provider details not found: ${providerName}`);
     } else {
-      return mapping[providerName].address;
+      return mapping[providerName];
     }
   }
 
