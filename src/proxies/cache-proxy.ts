@@ -54,6 +54,7 @@ export default class CacheProxy {
   async getManyPrices(args: {
     symbol: string;
     provider: string;
+    interval: number,
     fromTimestamp: number;
     toTimestamp: number }): Promise<PriceDataWithSignature[]> {
       const { data } = await axios.get(this.cacheApiUrl, { params: args });

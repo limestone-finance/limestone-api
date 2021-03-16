@@ -21,6 +21,13 @@ describe("Test getPrice method", () => {
     expect(price.value).toBeGreaterThan(10);
   });
 
+  // TODO finish this test
+  // test("Should get prices for AR, ETH and BTC", async () => {
+  //   const symbols = ["AR", "ETH", "BTC"];
+  //   const prices: any = await limestone.getPrice(symbols);
+  //   console.log(prices);
+  // });
+
   test("Should verify signature for latest ETH price", async () => {
     const symbol = "ETH";
     const price = await limestone.getPrice(symbol, {

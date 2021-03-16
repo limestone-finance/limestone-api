@@ -15,13 +15,23 @@ interface GetPriceOptions {
   verifySignature?: boolean; 
 };
 
+interface GetHistoricalPriceOptions extends GetPriceOptions {
+  date: Date;
+};
+
+interface GetHistoricalPriceForIntervalOptions extends GetPriceOptions {
+  startDate: Date;
+  endDate: Date;
+  interval: number; // ms
+};
+
 export default class LimestoneApi {
-  defaultProvider: string;
-  useCache: boolean;
-  version: string;
-  verifySignature: boolean;
-  arweaveProxy: ArweaveProxy;
-  cacheProxy: CacheProxy;
+  private defaultProvider: string;
+  private useCache: boolean;
+  private version: string;
+  private verifySignature: boolean;
+  private arweaveProxy: ArweaveProxy;
+  private cacheProxy: CacheProxy;
 
   constructor(opts: {
     defaultProvider?: string;
@@ -59,51 +69,68 @@ export default class LimestoneApi {
     });
   }
 
-  async getPrice(
-    tokenSymbol: string,
-    opts: GetPriceOptions = {}): Promise<PriceData | undefined> {
-      const provider = _.defaultTo(opts.provider, this.defaultProvider);
 
-      if (this.useCache) {
-        const price = await this.cacheProxy.getPrice({
-          symbol: tokenSymbol,
+  async getPrice(symbol: string,
+    opts?: GetPriceOptions): Promise<PriceData | undefined>;
+  async getPrice(symbols: string[],
+    opts?: GetPriceOptions): Promise<PriceData[]>;
+  async getPrice(symbolOrSymbols: any,
+    opts: GetPriceOptions = {}): Promise<any> {
+    const provider = _.defaultTo(opts.provider, this.defaultProvider);
+    const shouldVerifySignature = _.defaultTo(
+      opts.verifySignature,
+      this.verifySignature);
+
+    if (_.isArray(symbolOrSymbols)) {
+      return await this.getLatestPriceForManySymbols({
+        symbols: symbolOrSymbols,
+        provider,
+        shouldVerifySignature,
+      });
+    } else if (typeof symbolOrSymbols === "string") {
+      return await this.getLatestPriceForOneToken({
+        symbol: symbolOrSymbols,
+        provider,
+        shouldVerifySignature,
+      });
+    }
+  }
+
+  async getHistoricalPrice(symbol: string,
+    opts: GetHistoricalPriceOptions): Promise<PriceData | undefined>;
+  async getHistoricalPrice(symbol: string,
+    opts: GetHistoricalPriceForIntervalOptions): Promise<PriceData[]>;
+  async getHistoricalPrice(symbols: string[],
+    opts: GetHistoricalPriceOptions): Promise<PriceData[]>;
+  async getHistoricalPrice(symbolOrSymbols: any, opts: any): Promise<any> {
+    const provider = _.defaultTo(opts.provider, this.defaultProvider);
+    const shouldVerifySignature = _.defaultTo(
+      opts.verifySignature,
+      this.verifySignature);
+
+    if (_.isArray(symbolOrSymbols)) {
+      // TODO: Fetch historical price for each passed symbol
+      throw new Error(
+        "Fetching historical prices for many symbols is not implemented");
+    } else if (typeof symbolOrSymbols === "string") {
+      if (opts.interval !== undefined) {
+        return await this.getHistoricalPricesInIntervalForOneSymbol({
+          symbol: symbolOrSymbols,
+          fromTimestamp: opts.startDate.getTime(),
+          toTimestamp: opts.endDate.getTime(),
+          interval: opts.interval,
           provider,
+          shouldVerifySignature,
         });
-
-        // Signature verification
-        const shouldVerifySignature = _.defaultTo(
-          opts.verifySignature,
-          this.verifySignature);
-        if (shouldVerifySignature && price !== undefined) {
-          await this.assertValidSignature(price);
-        }
-
-        return price;
       } else {
-        const prices = await this.getPricesFromArweave(provider);
-        const priceForSymbol = prices.find(p => p.symbol === tokenSymbol);
-        if (priceForSymbol === undefined) {
-          return undefined;
-        } else {
-          return priceForSymbol;
-        }
+        return await this.getHistoricalPriceForOneSymbol({
+          symbol: symbolOrSymbols,
+          timestamp: opts.date.getTime(),
+          provider,
+          shouldVerifySignature,
+        });
       }
     }
-
-  async getPrices(
-    symbols: string[],
-    opts: GetPriceOptions = {}): Promise<PriceData[]> {
-      const provider = _.defaultTo(opts.provider, this.defaultProvider);
-
-      if (this.useCache) {
-        return await this.cacheProxy.getPriceForManyTokens({
-          symbols,
-          provider,
-        });
-      } else {
-        const allPrices = await this.getPricesFromArweave(provider);
-        return allPrices.filter(p => symbols.includes(p.symbol));
-      }
   }
 
   async getAllPrices(opts: GetPriceOptions = {}): Promise<PriceData[]> {
@@ -116,11 +143,46 @@ export default class LimestoneApi {
     }
   }
 
+  private async getLatestPriceForOneToken(args: {
+    symbol: string,
+    provider: string,
+    shouldVerifySignature: boolean,
+  }): Promise<PriceData | undefined> {
+    if (this.useCache) {
+      // Getting price from cache
+      const price = await this.cacheProxy.getPrice(
+        _.pick(args, ["symbol", "provider"]));
+      if (args.shouldVerifySignature && price !== undefined) {
+        await this.assertValidSignature(price);
+      }
+      return price;
+    } else {
+      // Getting price from arweave
+      const prices = await this.getPricesFromArweave(args.provider);
+      const priceForSymbol = prices.find(p => p.symbol === args.symbol);
+      return priceForSymbol;
+    }
+  }
+
+  private async getLatestPriceForManySymbols(args: {
+    symbols: string[],
+    provider: string,
+    shouldVerifySignature: boolean,
+  }): Promise<PriceData[]> {
+    if (this.useCache) {
+      return await this.cacheProxy.getPriceForManyTokens(
+        _.pick(args, ["symbols", "provider"]));
+    } else {
+      const allPrices = await this.getPricesFromArweave(args.provider);
+      return allPrices.filter(p => args.symbols.includes(p.symbol));
+    }
+  }
+
   private async getPricesFromArweave(provider: string): Promise<PriceData[]> {
     const txId = await this.arweaveProxy.findTxIdInGraphQL({
       type: "data",
       provider,
-      version,
+      version: this.version,
     });
 
     if (txId === undefined) {
@@ -140,67 +202,64 @@ export default class LimestoneApi {
     });
   }
 
-  async getHistoricalPrice(
-    tokenSymbol: string,
-    date: Date,
-    opts: GetPriceOptions = {}): Promise<PriceData | undefined> {
-      if (this.useCache) {
-        const price = await this.cacheProxy.getPrice({
-          symbol: tokenSymbol,
-          provider: _.defaultTo(opts.provider, this.defaultProvider),
-          timestamp: date.getTime(),
-        });
+  private async getHistoricalPriceForOneSymbol(args: {
+    symbol: string,
+    provider: string,
+    timestamp: number,
+    shouldVerifySignature: boolean,
+  }): Promise<PriceData | undefined> {
+    if (this.useCache) {
+      const price = await this.cacheProxy.getPrice(
+        _.pick(args, ["symbol", "provider", "timestamp"]));
 
-        // Signature verification
-        const shouldVerifySignature = _.defaultTo(
-          opts.verifySignature,
-          this.verifySignature);
-        if (shouldVerifySignature && price !== undefined) {
-          await this.assertValidSignature(price);
-        }
-
-        return price;
-      } else {
-        // TODO: we cannot query ArGQL with timestamp camparators like timestamp_gt
-        // But in future we can think of querying based on block numbers
-        throw new Error(
-          "Fetching historical price from arweave is not supported");
+      // Signature verification
+      if (args.shouldVerifySignature && price !== undefined) {
+        await this.assertValidSignature(price);
       }
+
+      return price;
+    } else {
+      // TODO: we cannot query ArGQL with timestamp camparators like timestamp_gt
+      // But in future we can think of querying based on block numbers
+      throw new Error(
+        "Fetching historical price from arweave is not supported");
+    }
   }
 
-  async getHistoricalPrices(
-    tokenSymbol: string,
-    startDate: Date,
-    endDate: Date,
-    opts: GetPriceOptions = {}): Promise<PriceData[]> {
-      if (this.useCache) {
-        const prices = await this.cacheProxy.getManyPrices({
-          symbol: tokenSymbol,
-          provider: _.defaultTo(opts.provider, this.defaultProvider),
-          fromTimestamp: startDate.getTime(),
-          toTimestamp: endDate.getTime(),
-        });
+  private async getHistoricalPricesInIntervalForOneSymbol(args: {
+    symbol: string,
+    provider: string,
+    fromTimestamp: number,
+    toTimestamp: number,
+    interval: number,
+    shouldVerifySignature: boolean,
+  }): Promise<PriceData[]> {
+    if (this.useCache) {
+      const prices = await this.cacheProxy.getManyPrices(_.pick(args, [
+        "symbol",
+        "provider",
+        "fromTimestamp",
+        "toTimestamp",
+        "interval",
+      ]));
 
-        // Signature verification for all prices
-        const shouldVerifySignature = _.defaultTo(
-          opts.verifySignature,
-          this.verifySignature);
-        if (shouldVerifySignature) {
-          for (const price of prices) {
-            await this.assertValidSignature(price);
-          }
+      // Signature verification for all prices
+      if (args.shouldVerifySignature) {
+        for (const price of prices) {
+          await this.assertValidSignature(price);
         }
-
-        return prices;
-      } else {
-        // TODO: we cannot query ArGQL with timestamp camparators like timestamp_gt
-        // But in future we can think of querying based on block numbers
-        throw new Error(
-          "Fetching historical prices from arweave is not supported");
       }
-    }
 
-  async assertValidSignature(price: PriceDataWithSignature): Promise<void> {
+      return prices;
+    } else {
+      // TODO: we cannot query ArGQL with timestamp camparators like timestamp_gt
+      // But in future we can think of querying based on block numbers
+      throw new Error(
+        "Fetching historical prices from arweave is not supported");
+    }
+  }
+
+  private async assertValidSignature(price: PriceDataWithSignature): Promise<void> {
     // TODO: Maybe we can pass the signed string in broadcaster
     // to avoid potential problems with signature verification
 
