@@ -35,6 +35,22 @@ export default class CacheProxy {
       }
     }
 
+  // If symbols arg is not passed it will fetch prices for all tokens    
+  async getPriceForManyTokens(args: {
+    provider: string,
+    symbols?: string[],
+  }): Promise<PriceData[]> {
+    const params: any = {};
+
+    if (args.symbols !== undefined) {
+      params.symbols = args.symbols.join(",");
+    }
+
+    const { data } = await axios.get(this.cacheApiUrl, { params });
+
+    return data;
+  }
+
   async getManyPrices(args: {
     symbol: string;
     provider: string;

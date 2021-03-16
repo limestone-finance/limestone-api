@@ -80,31 +80,65 @@ export default class LimestoneApi {
 
         return price;
       } else {
-        const txId = await this.arweaveProxy.findTxIdInGraphQL({
-          type: "data",
-          provider,
-          version,
-        });
-
-        if (txId === undefined) {
+        const prices = await this.getPricesFromArweave(provider);
+        const priceForSymbol = prices.find(p => p.symbol === tokenSymbol);
+        if (priceForSymbol === undefined) {
           return undefined;
-        }
-
-        const prices = await this.arweaveProxy.getTxDataById(txId, {
-          parseJSON: true,
-        });
-
-        for (const price of prices) {
-          if (price.symbol === tokenSymbol) {
-            return {
-              ...price,
-              provider, // TODO: maybe we want to return provider address here
-              permawebTx: txId,
-            }
-          }
+        } else {
+          return priceForSymbol;
         }
       }
     }
+
+  async getPrices(
+    symbols: string[],
+    opts: GetPriceOptions = {}): Promise<PriceData[]> {
+      const provider = _.defaultTo(opts.provider, this.defaultProvider);
+
+      if (this.useCache) {
+        return await this.cacheProxy.getPriceForManyTokens({
+          symbols,
+          provider,
+        });
+      } else {
+        const allPrices = await this.getPricesFromArweave(provider);
+        return allPrices.filter(p => symbols.includes(p.symbol));
+      }
+  }
+
+  async getAllPrices(opts: GetPriceOptions = {}): Promise<PriceData[]> {
+    const provider = _.defaultTo(opts.provider, this.defaultProvider);
+
+    if (this.useCache) {
+      return await this.cacheProxy.getPriceForManyTokens({ provider });
+    } else {
+      return await this.getPricesFromArweave(provider);
+    }
+  }
+
+  private async getPricesFromArweave(provider: string): Promise<PriceData[]> {
+    const txId = await this.arweaveProxy.findTxIdInGraphQL({
+      type: "data",
+      provider,
+      version,
+    });
+
+    if (txId === undefined) {
+      return [];
+    }
+
+    const prices = await this.arweaveProxy.getTxDataById(txId, {
+      parseJSON: true,
+    });
+
+    return prices.map((price: any) => {
+      return {
+        ...price,
+        provider, // TODO: maybe we want to return provider address here
+        permawebTx: txId,
+      }
+    });
+  }
 
   async getHistoricalPrice(
     tokenSymbol: string,
