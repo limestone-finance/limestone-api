@@ -1,5 +1,8 @@
 import limestone from "../src/index";
 
+// TODO: after node exection update this tests with new times
+// and add time diff checking
+
 describe("Test getHistoricalPrice method", () => {
   test("Should get AR price for 2021-03-14", async () => {
     const symbol = "AR";

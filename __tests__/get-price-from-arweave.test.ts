@@ -1,6 +1,6 @@
 import LimestoneApi from "../src/limestone-api";
 
-// TODO: check if time is close to now
+const MAX_TIME_DIFF = 1200 * 1000; // 20 minutes
 
 describe("Test getPrice method", () => {
   const limestoneApiClient: LimestoneApi = LimestoneApi.init({
@@ -14,6 +14,7 @@ describe("Test getPrice method", () => {
     expect(price).toBeDefined();
     expect(price.symbol).toBe(symbol);
     expect(price.value).toBeGreaterThan(0.1);
+    expect(Date.now() - price.timestamp).toBeLessThan(MAX_TIME_DIFF);
   });
 
   test("Should get ETH price from arweave", async () => {
@@ -23,6 +24,7 @@ describe("Test getPrice method", () => {
     expect(price).toBeDefined();
     expect(price.symbol).toBe(symbol);
     expect(price.value).toBeGreaterThan(10);
+    expect(Date.now() - price.timestamp).toBeLessThan(MAX_TIME_DIFF);
   });
 
   test("Should get ETH, BTC, and AR price from arweave", async () => {
@@ -35,6 +37,8 @@ describe("Test getPrice method", () => {
     expect(prices["AR"].value).toBeGreaterThan(0.1);
     expect(prices["ETH"].value).toBeGreaterThan(100);
     expect(prices["BTC"].value).toBeGreaterThan(1000);
+    expect(Date.now() - prices["ETH"].timestamp).toBeLessThan(MAX_TIME_DIFF);
+    expect(Date.now() - prices["BTC"].timestamp).toBeLessThan(MAX_TIME_DIFF);
   });
 
   test("Should not get historical prices from arweave", async () => {

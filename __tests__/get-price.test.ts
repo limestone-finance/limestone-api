@@ -1,6 +1,6 @@
 import limestone from "../src/index";
 
-// TODO: check if time is close to now
+const MAX_TIME_DIFF = 30000; // 30s
 
 describe("Test getPrice method", () => {
   test("Should get AR price", async () => {
@@ -10,6 +10,7 @@ describe("Test getPrice method", () => {
     expect(price).toBeDefined();
     expect(price.symbol).toBe(symbol);
     expect(price.value).toBeGreaterThan(0.1);
+    expect(Date.now() - price.timestamp).toBeLessThan(MAX_TIME_DIFF);
   });
 
   test("Should get ETH price", async () => {
@@ -19,6 +20,7 @@ describe("Test getPrice method", () => {
     expect(price).toBeDefined();
     expect(price.symbol).toBe(symbol);
     expect(price.value).toBeGreaterThan(10);
+    expect(Date.now() - price.timestamp).toBeLessThan(MAX_TIME_DIFF);
   });
 
   test("Should get prices for AR, ETH and BTC", async () => {
@@ -31,6 +33,8 @@ describe("Test getPrice method", () => {
     expect(prices["AR"].value).toBeGreaterThan(0.1);
     expect(prices["ETH"].value).toBeGreaterThan(100);
     expect(prices["BTC"].value).toBeGreaterThan(1000);
+    expect(Date.now() - prices["AR"].timestamp).toBeLessThan(MAX_TIME_DIFF);
+    expect(Date.now() - prices["BTC"].timestamp).toBeLessThan(MAX_TIME_DIFF);
   });
 
   test("Should get prices for AR, ETH, BNB, EUR, BTC and verify signature", async () => {
