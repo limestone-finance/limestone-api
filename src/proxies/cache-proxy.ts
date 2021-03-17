@@ -35,12 +35,16 @@ export default class CacheProxy {
       }
     }
 
-  // If symbols arg is not passed it will fetch prices for all tokens    
+  // If 'symbols' is not passed it will fetch prices for all tokens    
   async getPriceForManyTokens(args: {
     provider: string,
+    timestamp?: number,
     symbols?: string[],
-  }): Promise<PriceData[]> {
-    const params: any = {};
+  }): Promise<{ [symbol: string]: PriceDataWithSignature }> {
+    const params: any = {
+      provider: args.provider,
+      toTimestamp: args.timestamp,
+    };
 
     if (args.symbols !== undefined) {
       params.symbols = args.symbols.join(",");

@@ -1,4 +1,4 @@
-import _  from "lodash";
+import _, { filter }  from "lodash";
 import ArweaveProxy from "./proxies/arweave-proxy";
 import CacheProxy from "./proxies/cache-proxy";
 import { LimestoneApiConfig, PriceData, PriceDataWithSignature } from "./types";
@@ -82,12 +82,14 @@ export default class LimestoneApi {
       this.verifySignature);
 
     if (_.isArray(symbolOrSymbols)) {
-      return await this.getLatestPriceForManySymbols({
+      // Getting latest price for many tokens
+      return await this.getPriceForManyTokens({
         symbols: symbolOrSymbols,
         provider,
         shouldVerifySignature,
       });
     } else if (typeof symbolOrSymbols === "string") {
+      // Getting latest price for one token
       return await this.getLatestPriceForOneToken({
         symbol: symbolOrSymbols,
         provider,
@@ -96,6 +98,18 @@ export default class LimestoneApi {
     }
   }
 
+  /**
+   * Returns the historical price for a token or a list of tokens
+   *
+   * @remarks
+   * Some remark
+   *
+   * @param symbol - Token symbol
+   * @param opts - Options
+   * @returns The historical price for symbol
+   *
+   * @beta
+   */
   async getHistoricalPrice(symbol: string,
     opts: GetHistoricalPriceOptions): Promise<PriceData | undefined>;
   async getHistoricalPrice(symbol: string,
@@ -109,9 +123,13 @@ export default class LimestoneApi {
       this.verifySignature);
 
     if (_.isArray(symbolOrSymbols)) {
-      // TODO: Fetch historical price for each passed symbol
-      throw new Error(
-        "Fetching historical prices for many symbols is not implemented");
+      // Getting historical price for many tokens
+      return await this.getPriceForManyTokens({
+        symbols: symbolOrSymbols,
+        timestamp: opts.date.getTime(),
+        provider,
+        shouldVerifySignature,
+      });
     } else if (typeof symbolOrSymbols === "string") {
       if (opts.interval !== undefined) {
         return await this.getHistoricalPricesInIntervalForOneSymbol({
@@ -133,15 +151,16 @@ export default class LimestoneApi {
     }
   }
 
-  async getAllPrices(opts: GetPriceOptions = {}): Promise<PriceData[]> {
-    const provider = _.defaultTo(opts.provider, this.defaultProvider);
+  async getAllPrices(
+    opts: GetPriceOptions = {}): Promise<{ [symbol: string]: PriceData }> {
+      const provider = _.defaultTo(opts.provider, this.defaultProvider);
 
-    if (this.useCache) {
-      return await this.cacheProxy.getPriceForManyTokens({ provider });
-    } else {
-      return await this.getPricesFromArweave(provider);
+      if (this.useCache) {
+        return await this.cacheProxy.getPriceForManyTokens({ provider });
+      } else {
+        return await this.getPricesFromArweave(provider);
+      }
     }
-  }
 
   private async getLatestPriceForOneToken(args: {
     symbol: string,
@@ -170,59 +189,77 @@ export default class LimestoneApi {
 
       // Getting price from arweave in a "standard" way (from data)
       const prices = await this.getPricesFromArweave(args.provider);
-      const priceForSymbol = prices.find(p => p.symbol === args.symbol);
+      const priceForSymbol = prices[args.symbol];
       return priceForSymbol;
     }
   }
 
-  private async getLatestPriceForManySymbols(args: {
+  // private async getLatestPriceForManySymbols(args: {
+  //   symbols: string[],
+  //   provider: string,
+  //   shouldVerifySignature: boolean,
+  // }): Promise<{ [token: string]: PriceData }> {
+    
+  // }
+
+  private async getPriceForManyTokens(args: {
     symbols: string[],
     provider: string,
+    timestamp?: number,
     shouldVerifySignature: boolean,
   }): Promise<{ [token: string]: PriceData }> {
     // Fetching prices
-    let prices = [];
     if (this.useCache) {
-      prices = await this.cacheProxy.getPriceForManyTokens(
-        _.pick(args, ["symbols", "provider"]));
-    } else {
-      const allPrices = await this.getPricesFromArweave(args.provider);
-      prices = allPrices.filter(p => args.symbols.includes(p.symbol));
-    }
-
-    // Building prices object from array
-    const pricesObj: { [token: string]: PriceData } = {};
-    for (const price of prices) {
-      pricesObj[price.symbol] = price;
-    }
-
-    return pricesObj;
-  }
-
-  private async getPricesFromArweave(provider: string): Promise<PriceData[]> {
-    const { address } = await this.arweaveProxy.getProviderDetails(provider);
-
-    const gqlResponse = await this.arweaveProxy.findPricesInGraphQL({
-      type: "data",
-      providerAddress: address,
-      version: this.version,
-    });
-
-    if (gqlResponse === undefined) {
-      return [];
-    }
-
-    const prices = await this.arweaveProxy.getTxDataById(
-      gqlResponse.permawebTx, { parseJSON: true });
-
-    return prices.map((price: any) => {
-      return {
-        ...price,
-        provider: address,
-        permawebTx: gqlResponse.permawebTx,
+      const pricesObj = await this.cacheProxy.getPriceForManyTokens(
+        _.pick(args, ["symbols", "provider", "timestamp"]));
+      
+      // Signature verification
+      if (args.shouldVerifySignature) {
+        for (const symbol in pricesObj) {
+          this.assertValidSignature(pricesObj[symbol]);
+        }
       }
-    });
+
+      return pricesObj;
+    } else {
+      if (args.timestamp !== undefined) {
+        throw new Error(
+          "Getting historical prices from arweave is not supported");
+      }
+      const allPrices = await this.getPricesFromArweave(args.provider);
+      return _.pick(allPrices, args.symbols);
+    }
   }
+
+  private async getPricesFromArweave(
+    provider: string): Promise<{ [symbol: string]: PriceData }> {
+      const { address } = await this.arweaveProxy.getProviderDetails(provider);
+
+      const gqlResponse = await this.arweaveProxy.findPricesInGraphQL({
+        type: "data",
+        providerAddress: address,
+        version: this.version,
+      });
+
+      if (gqlResponse === undefined) {
+        return {};
+      }
+
+      const prices = await this.arweaveProxy.getTxDataById(
+        gqlResponse.permawebTx, { parseJSON: true });
+
+      // Building prices object
+      const pricesObj: any = {};
+      for (const price of prices) {
+        pricesObj[price.symbol] = {
+          ...price,
+          provider: address,
+          permawebTx: gqlResponse.permawebTx,
+        };
+      }
+
+      return pricesObj;
+    }
 
   private async getHistoricalPriceForOneSymbol(args: {
     symbol: string,
