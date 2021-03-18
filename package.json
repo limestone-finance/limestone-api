@@ -1,10 +1,11 @@
 {
   "name": "@limestonefi/api",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "An api to access trusted token pricing data secured on Arweave and protected by provider's collateral. ",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --timeout 10000 index.test.js",
+    "build": "tsc",
+    "test": "jest --config jestconfig.json",
     "fmt": "prettier --write ."
   },
   "repository": {
@@ -25,16 +26,24 @@
   },
   "homepage": "https://github.com/jakub-wojciechowski/limestone-api#readme",
   "devDependencies": {
-    "chai": "^4.2.0",
-    "chai-as-promised": "^7.1.1",
-    "chai-datetime": "^1.7.0",
+    "@types/jest": "^26.0.20",
+    "@types/lodash": "^4.14.168",
+    "@types/node": "^14.14.33",
     "console-stamp": "^0.2.9",
     "discord.js": "^12.5.1",
-    "mocha": "^8.2.1",
-    "prettier": "^2.2.1"
+    "jest": "^26.6.3",
+    "prettier": "^2.2.1",
+    "ts-jest": "^26.5.3",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.2.3"
   },
   "dependencies": {
     "ar-gql": "^0.0.6",
-    "arweave": "^1.10.0"
-  }
+    "arweave": "^1.10.11",
+    "axios": "^0.21.1",
+    "lodash": "^4.17.21"
+  },
+  "files": [
+    "lib/**/*"
+  ]
 }
