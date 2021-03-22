@@ -28,7 +28,7 @@ export default class CacheProxy {
 
       const { data } = await axios.get(this.cacheApiUrl, { params });
 
-      if (Array.isArray(data) && data.length == 1) {
+      if (Array.isArray(data) && data.length === 1) {
         return data[0];
       } else {
         return undefined;

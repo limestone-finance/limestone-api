@@ -1,9 +1,8 @@
-import _, { filter }  from "lodash";
+import _ from "lodash";
 import ArweaveProxy from "./proxies/arweave-proxy";
 import CacheProxy from "./proxies/cache-proxy";
 import { LimestoneApiConfig, PriceData, PriceDataWithSignature } from "./types";
-
-const { version } = require("../package.json") as { version: string };
+import pjson from "../package.json";
 
 const LIMESTON_API_DEFAULTS = {
   provider: "limestone",
@@ -42,7 +41,7 @@ export default class LimestoneApi {
   }) {
     this.arweaveProxy = opts.arweaveProxy;
     this.cacheProxy = new CacheProxy();
-    this.version = _.defaultTo(opts.version, version);
+    this.version = _.defaultTo(opts.version, pjson.version);
     this.verifySignature = _.defaultTo(opts.verifySignature, false);
     this.defaultProvider = _.defaultTo(
       opts.defaultProvider,
@@ -215,7 +214,7 @@ export default class LimestoneApi {
       
       // Signature verification
       if (args.shouldVerifySignature) {
-        for (const symbol in pricesObj) {
+        for (const symbol of _.keys(pricesObj)) {
           this.assertValidSignature(pricesObj[symbol]);
         }
       }

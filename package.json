@@ -1,12 +1,18 @@
 {
-  "name": "@limestonefi/api",
+  "name": "limestone-api-v2-beta",
   "version": "0.2.0",
   "description": "An api to access trusted token pricing data secured on Arweave and protected by provider's collateral. ",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
     "build": "tsc",
     "test": "jest --config jestconfig.json",
-    "fmt": "prettier --write ."
+    "fmt": "prettier --write .",
+    "prepare": "yarn build",
+    "lint": "tslint -p ./",
+    "prepublishOnly": "yarn test && yarn lint",
+    "preversion": "yarn lint",
+    "version" : "yarn fmt && git add -A src",
+    "postversion" : "git push && git push --tags"
   },
   "repository": {
     "type": "git",
@@ -35,6 +41,8 @@
     "prettier": "^2.2.1",
     "ts-jest": "^26.5.3",
     "ts-node": "^9.1.1",
+    "tslint": "^6.1.3",
+    "tslint-config-prettier": "^1.18.0",
     "typescript": "^4.2.3"
   },
   "dependencies": {
