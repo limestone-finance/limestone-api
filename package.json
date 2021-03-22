@@ -2,7 +2,8 @@
   "name": "limestone-api-v2-beta",
   "version": "0.2.0",
   "description": "An api to access trusted token pricing data secured on Arweave and protected by provider's collateral. ",
-  "main": "src/index.js",
+  "main": "lib/src/index.js",
+  "types": "lib/src/index.d.ts",
   "scripts": {
     "build": "tsc",
     "test": "jest --config jestconfig.json",
