@@ -8,6 +8,6 @@
     "resolveJsonModule": true,
     "esModuleInterop": true
   },
-  "include": ["src/**/*", "package.json", "yarn.lock"],
+  "include": ["src/**/*"],
   "exclude": ["node_modules", "__tests__", "examples", "coverage"]
 }

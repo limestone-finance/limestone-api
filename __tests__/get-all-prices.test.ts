@@ -2,7 +2,7 @@ import limestone from "../src/index";
 import LimestoneApi from "../src/limestone-api";
 
 const MAX_TIME_DIFF = 30000; // 30s
-const MAX_TIME_DIFF_ARWEAVE = 1200 * 1000; // 20 minutes
+const MAX_TIME_DIFF_ARWEAVE = 7200 * 1000; // 2 hours
 
 describe("Test getAllPrices method", () => {
   test("Should get all prices", async () => {
