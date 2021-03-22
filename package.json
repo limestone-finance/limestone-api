@@ -1,6 +1,6 @@
 {
   "name": "limestone-api-v2-beta",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "An api to access trusted token pricing data secured on Arweave and protected by provider's collateral. ",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -52,5 +52,7 @@
     "axios": "^0.21.1",
     "lodash": "^4.17.21"
   },
-  "files": ["lib/**/*"]
+  "files": [
+    "lib/**/*"
+  ]
 }
