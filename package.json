@@ -12,7 +12,7 @@
     "lint": "tslint -p ./",
     "prepublishOnly": "yarn test && yarn lint",
     "preversion": "yarn lint",
-    "version": "yarn format && git add -A src",
+    "version": "git add -A src",
     "postversion": "git push && git push --tags"
   },
   "repository": {
