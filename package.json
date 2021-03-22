@@ -6,13 +6,13 @@
   "scripts": {
     "build": "tsc",
     "test": "jest --config jestconfig.json",
-    "fmt": "prettier --write .",
+    "format": "prettier --write \"src/**/*.ts\"",
     "prepare": "yarn build",
     "lint": "tslint -p ./",
     "prepublishOnly": "yarn test && yarn lint",
     "preversion": "yarn lint",
-    "version" : "yarn fmt && git add -A src",
-    "postversion" : "git push && git push --tags"
+    "version": "yarn format && git add -A src",
+    "postversion": "git push && git push --tags"
   },
   "repository": {
     "type": "git",

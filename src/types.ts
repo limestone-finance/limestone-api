@@ -3,7 +3,7 @@ export interface LimestoneApiConfig {
   defaultProvider?: string; // Name of default provider
   version?: string;
   verifySignature?: boolean;
-};
+}
 
 export interface PriceData {
   id?: string;
@@ -14,7 +14,7 @@ export interface PriceData {
   version: string;
   source?: string;
   timestamp: number;
-};
+}
 
 export interface PriceDataWithSignature extends PriceData {
   signature: string;
@@ -23,4 +23,4 @@ export interface PriceDataWithSignature extends PriceData {
 
 export interface ProviderNameToAddressMapping {
   [name: string]: string;
-};
+}

@@ -11,18 +11,18 @@ const LIMESTON_API_DEFAULTS = {
 
 interface GetPriceOptions {
   provider?: string;
-  verifySignature?: boolean; 
-};
+  verifySignature?: boolean;
+}
 
 interface GetHistoricalPriceOptions extends GetPriceOptions {
   date: Date;
-};
+}
 
 interface GetHistoricalPriceForIntervalOptions extends GetPriceOptions {
   startDate: Date;
   endDate: Date;
   interval: number; // ms
-};
+}
 
 export default class LimestoneApi {
   private defaultProvider: string;
@@ -45,10 +45,9 @@ export default class LimestoneApi {
     this.verifySignature = _.defaultTo(opts.verifySignature, false);
     this.defaultProvider = _.defaultTo(
       opts.defaultProvider,
-      LIMESTON_API_DEFAULTS.provider);
-    this.useCache = _.defaultTo(
-      opts.useCache,
-      LIMESTON_API_DEFAULTS.useCache);
+      LIMESTON_API_DEFAULTS.provider,
+    );
+    this.useCache = _.defaultTo(opts.useCache, LIMESTON_API_DEFAULTS.useCache);
   }
 
   // Here we can pass any async code that we need to execute on api init
@@ -68,17 +67,23 @@ export default class LimestoneApi {
     });
   }
 
-
-  async getPrice(symbol: string,
-    opts?: GetPriceOptions): Promise<PriceData | undefined>;
-  async getPrice(symbols: string[],
-    opts?: GetPriceOptions): Promise<{ [token: string]: PriceData }>;
-  async getPrice(symbolOrSymbols: any,
-    opts: GetPriceOptions = {}): Promise<any> {
+  async getPrice(
+    symbol: string,
+    opts?: GetPriceOptions,
+  ): Promise<PriceData | undefined>;
+  async getPrice(
+    symbols: string[],
+    opts?: GetPriceOptions,
+  ): Promise<{ [token: string]: PriceData }>;
+  async getPrice(
+    symbolOrSymbols: any,
+    opts: GetPriceOptions = {},
+  ): Promise<any> {
     const provider = _.defaultTo(opts.provider, this.defaultProvider);
     const shouldVerifySignature = _.defaultTo(
       opts.verifySignature,
-      this.verifySignature);
+      this.verifySignature,
+    );
 
     if (_.isArray(symbolOrSymbols)) {
       // Getting latest price for many tokens
@@ -109,17 +114,24 @@ export default class LimestoneApi {
    *
    * @beta
    */
-  async getHistoricalPrice(symbol: string,
-    opts: GetHistoricalPriceOptions): Promise<PriceData | undefined>;
-  async getHistoricalPrice(symbol: string,
-    opts: GetHistoricalPriceForIntervalOptions): Promise<PriceData[]>;
-  async getHistoricalPrice(symbols: string[],
-    opts: GetHistoricalPriceOptions): Promise<{ [token: string]: PriceData }>;
+  async getHistoricalPrice(
+    symbol: string,
+    opts: GetHistoricalPriceOptions,
+  ): Promise<PriceData | undefined>;
+  async getHistoricalPrice(
+    symbol: string,
+    opts: GetHistoricalPriceForIntervalOptions,
+  ): Promise<PriceData[]>;
+  async getHistoricalPrice(
+    symbols: string[],
+    opts: GetHistoricalPriceOptions,
+  ): Promise<{ [token: string]: PriceData }>;
   async getHistoricalPrice(symbolOrSymbols: any, opts: any): Promise<any> {
     const provider = _.defaultTo(opts.provider, this.defaultProvider);
     const shouldVerifySignature = _.defaultTo(
       opts.verifySignature,
-      this.verifySignature);
+      this.verifySignature,
+    );
 
     if (_.isArray(symbolOrSymbols)) {
       // Getting historical price for many tokens
@@ -151,25 +163,27 @@ export default class LimestoneApi {
   }
 
   async getAllPrices(
-    opts: GetPriceOptions = {}): Promise<{ [symbol: string]: PriceData }> {
-      const provider = _.defaultTo(opts.provider, this.defaultProvider);
+    opts: GetPriceOptions = {},
+  ): Promise<{ [symbol: string]: PriceData }> {
+    const provider = _.defaultTo(opts.provider, this.defaultProvider);
 
-      if (this.useCache) {
-        return await this.cacheProxy.getPriceForManyTokens({ provider });
-      } else {
-        return await this.getPricesFromArweave(provider);
-      }
+    if (this.useCache) {
+      return await this.cacheProxy.getPriceForManyTokens({ provider });
+    } else {
+      return await this.getPricesFromArweave(provider);
     }
+  }
 
   private async getLatestPriceForOneToken(args: {
-    symbol: string,
-    provider: string,
-    shouldVerifySignature: boolean,
+    symbol: string;
+    provider: string;
+    shouldVerifySignature: boolean;
   }): Promise<PriceData | undefined> {
     if (this.useCache) {
       // Getting price from cache
       const price = await this.cacheProxy.getPrice(
-        _.pick(args, ["symbol", "provider"]));
+        _.pick(args, ["symbol", "provider"]),
+      );
       if (args.shouldVerifySignature && price !== undefined) {
         await this.assertValidSignature(price);
       }
@@ -180,7 +194,8 @@ export default class LimestoneApi {
       // Try to get price from graphql if possible
       if (args.symbol === "AR") {
         const price = await this.tryToGetPriceFromGQL(
-          _.pick(args, ["provider", "symbol"]));
+          _.pick(args, ["provider", "symbol"]),
+        );
         if (price !== undefined) {
           return price;
         }
@@ -198,20 +213,21 @@ export default class LimestoneApi {
   //   provider: string,
   //   shouldVerifySignature: boolean,
   // }): Promise<{ [token: string]: PriceData }> {
-    
+
   // }
 
   private async getPriceForManyTokens(args: {
-    symbols: string[],
-    provider: string,
-    timestamp?: number,
-    shouldVerifySignature: boolean,
+    symbols: string[];
+    provider: string;
+    timestamp?: number;
+    shouldVerifySignature: boolean;
   }): Promise<{ [token: string]: PriceData }> {
     // Fetching prices
     if (this.useCache) {
       const pricesObj = await this.cacheProxy.getPriceForManyTokens(
-        _.pick(args, ["symbols", "provider", "timestamp"]));
-      
+        _.pick(args, ["symbols", "provider", "timestamp"]),
+      );
+
       // Signature verification
       if (args.shouldVerifySignature) {
         for (const symbol of _.keys(pricesObj)) {
@@ -223,7 +239,8 @@ export default class LimestoneApi {
     } else {
       if (args.timestamp !== undefined) {
         throw new Error(
-          "Getting historical prices from arweave is not supported");
+          "Getting historical prices from arweave is not supported",
+        );
       }
       const allPrices = await this.getPricesFromArweave(args.provider);
       return _.pick(allPrices, args.symbols);
@@ -231,44 +248,48 @@ export default class LimestoneApi {
   }
 
   private async getPricesFromArweave(
-    provider: string): Promise<{ [symbol: string]: PriceData }> {
-      const { address } = await this.arweaveProxy.getProviderDetails(provider);
+    provider: string,
+  ): Promise<{ [symbol: string]: PriceData }> {
+    const { address } = await this.arweaveProxy.getProviderDetails(provider);
 
-      const gqlResponse = await this.arweaveProxy.findPricesInGraphQL({
-        type: "data",
-        providerAddress: address,
-        version: this.version,
-      });
+    const gqlResponse = await this.arweaveProxy.findPricesInGraphQL({
+      type: "data",
+      providerAddress: address,
+      version: this.version,
+    });
 
-      if (gqlResponse === undefined) {
-        return {};
-      }
-
-      const prices = await this.arweaveProxy.getTxDataById(
-        gqlResponse.permawebTx, { parseJSON: true });
-
-      // Building prices object
-      const pricesObj: any = {};
-      for (const price of prices) {
-        pricesObj[price.symbol] = {
-          ...price,
-          provider: address,
-          permawebTx: gqlResponse.permawebTx,
-        };
-      }
-
-      return pricesObj;
+    if (gqlResponse === undefined) {
+      return {};
     }
 
+    const prices = await this.arweaveProxy.getTxDataById(
+      gqlResponse.permawebTx,
+      { parseJSON: true },
+    );
+
+    // Building prices object
+    const pricesObj: any = {};
+    for (const price of prices) {
+      pricesObj[price.symbol] = {
+        ...price,
+        provider: address,
+        permawebTx: gqlResponse.permawebTx,
+      };
+    }
+
+    return pricesObj;
+  }
+
   private async getHistoricalPriceForOneSymbol(args: {
-    symbol: string,
-    provider: string,
-    timestamp: number,
-    shouldVerifySignature: boolean,
+    symbol: string;
+    provider: string;
+    timestamp: number;
+    shouldVerifySignature: boolean;
   }): Promise<PriceData | undefined> {
     if (this.useCache) {
       const price = await this.cacheProxy.getPrice(
-        _.pick(args, ["symbol", "provider", "timestamp"]));
+        _.pick(args, ["symbol", "provider", "timestamp"]),
+      );
 
       // Signature verification
       if (args.shouldVerifySignature && price !== undefined) {
@@ -280,16 +301,18 @@ export default class LimestoneApi {
       // TODO: we cannot query ArGQL with timestamp camparators like timestamp_gt
       // But in future we can think of querying based on block numbers
       throw new Error(
-        "Fetching historical price from arweave is not supported");
+        "Fetching historical price from arweave is not supported",
+      );
     }
   }
 
   private async tryToGetPriceFromGQL(args: {
-    symbol: string,
-    provider: string,
+    symbol: string;
+    provider: string;
   }): Promise<PriceData | undefined> {
-    const { address } =
-      await this.arweaveProxy.getProviderDetails(args.provider);
+    const { address } = await this.arweaveProxy.getProviderDetails(
+      args.provider,
+    );
 
     const response = await this.arweaveProxy.findPricesInGraphQL({
       type: "data",
@@ -312,21 +335,23 @@ export default class LimestoneApi {
   }
 
   private async getHistoricalPricesInIntervalForOneSymbol(args: {
-    symbol: string,
-    provider: string,
-    fromTimestamp: number,
-    toTimestamp: number,
-    interval: number,
-    shouldVerifySignature: boolean,
+    symbol: string;
+    provider: string;
+    fromTimestamp: number;
+    toTimestamp: number;
+    interval: number;
+    shouldVerifySignature: boolean;
   }): Promise<PriceData[]> {
     if (this.useCache) {
-      const prices = await this.cacheProxy.getManyPrices(_.pick(args, [
-        "symbol",
-        "provider",
-        "fromTimestamp",
-        "toTimestamp",
-        "interval",
-      ]));
+      const prices = await this.cacheProxy.getManyPrices(
+        _.pick(args, [
+          "symbol",
+          "provider",
+          "fromTimestamp",
+          "toTimestamp",
+          "interval",
+        ]),
+      );
 
       // Signature verification for all prices
       if (args.shouldVerifySignature) {
@@ -340,26 +365,31 @@ export default class LimestoneApi {
       // TODO: we cannot query ArGQL with timestamp camparators like timestamp_gt
       // But in future we can think of querying based on block numbers
       throw new Error(
-        "Fetching historical prices from arweave is not supported");
+        "Fetching historical prices from arweave is not supported",
+      );
     }
   }
 
-  private async assertValidSignature(price: PriceDataWithSignature): Promise<void> {
+  private async assertValidSignature(
+    price: PriceDataWithSignature,
+  ): Promise<void> {
     // TODO: Maybe we can pass the signed string in broadcaster
     // to avoid potential problems with signature verification
 
     // It is important to have properties of price object in the
     // same order as they have been set before signing
-    const signedData = JSON.stringify(_.pick(price, [
-      "id",
-      "source",
-      "symbol",
-      "timestamp",
-      "version",
-      "value",
-      "permawebTx",
-      "provider",
-    ]));
+    const signedData = JSON.stringify(
+      _.pick(price, [
+        "id",
+        "source",
+        "symbol",
+        "timestamp",
+        "version",
+        "value",
+        "permawebTx",
+        "provider",
+      ]),
+    );
     const publicKey = String(price.providerPublicKey);
 
     const validSignature = await this.arweaveProxy.verifySignature({
@@ -368,19 +398,20 @@ export default class LimestoneApi {
       signerPublicKey: publicKey,
     });
 
-    const addressFromPublicKey =
-      await this.arweaveProxy.arweaveClient.wallets.ownerToAddress(publicKey);
+    const addressFromPublicKey = await this.arweaveProxy.arweaveClient.wallets.ownerToAddress(
+      publicKey,
+    );
 
     if (!validSignature) {
-      throw new Error(
-        "Signature verification failed for price: " + signedData);
+      throw new Error("Signature verification failed for price: " + signedData);
     }
 
     if (addressFromPublicKey !== price.provider) {
       throw new Error(
-        `Provider address doesn't match the public key.`
-        + ` Address: ${price.provider}.`
-        + ` Public key: ${publicKey}.`);
+        `Provider address doesn't match the public key.` +
+          ` Address: ${price.provider}.` +
+          ` Public key: ${publicKey}.`,
+      );
     }
   }
-};
+}
