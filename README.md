@@ -71,8 +71,6 @@ console.log(price.timestamp); // timestamp for the price
     providerPublicKey: "fPFY7pm..." // String: Provider public key
   }
   ```
-  - signature
-  - providerPublicKey
 </details>
 
 <br/>
@@ -172,7 +170,7 @@ console.log(prices["BTC"].value); // BTC price for specific time
 ### Get historical prices in a time range
 To fetch historical prices in a time range specify currency symbol as the first argument of `getHistoricalPrice` method, and `startDate`, `endDate` and `interval` as fields of the second argument.
 
-💡 Note: currently Limestone API supports fetching historical prices in a time range only for a single token.
+💡 Note: currently Limestone API supports fetching historical prices in a time range only for a single currency.
 ```js
 const prices = await limestone.getHistoricalPrice("AR", {
   startDate: new Date("2021-03-29T12:35:09"),
