@@ -169,37 +169,71 @@ console.log(prices["BTC"].value); // BTC price for specific time
 ----------------------------------------------
 
 ### Get historical prices in a time range
-💡 Note: currently Limestone supports fetching historical prices in a time range only for a single token.
+To fetch historical prices in a time range you should specify currency symbol as the first argument of `getHistoricalPrice` method, and `startDate`, `endDate` and `interval` as fields of the second argument.
+
+💡 Note: currently Limestone API supports fetching historical prices in a time range only for a single token.
 ```js
-// TODO: add response
+const prices = await limestone.getHistoricalPrice("AR", {
+  startDate: new Date("2021-03-29T12:35:09"),
+  endDate: new Date("2021-03-30T12:35:09"),
+  interval: 3600 * 1000, // 1 hour
+});
+
+console.log(prices); // Example output below
+/*
+[
+  {
+    value: 28.8,
+    timestamp: 1617016995624,
+    ...
+  },
+  {
+    value: 28.59,
+    timestamp: 1617014111705,
+    ...
+  },
+  ...
+]
+*/
 ```
 
 ----------------------------------------------
 
 ### Verify signature
-💡 Note: describe what is signature verification
+All prices saved in Limestone have a signature, thanks to which you always can verify if the price data has been submitted by the trusted provider. To do so you can set `verifySignature` option to `true` in `getPrice`, `getHistoricalPrice` or `getAllPrices` methods. If signature is invalid - error will be thrown.
 ```js
-// TODO: add response
+const price = await limestone.getPrice("AR", {
+  verifySignature: true,
+});
+console.log(price.value);
 ```
 
 ----------------------------------------------
 
 ### Get prices from Arweave
-💡 Note: by default Limestone API fetches data from limestone cache layer.
+By default Limestone API fetches data from limestone cache layer. It works way faster than fetching directly from Arweave Blockchain. Even so, thanks to signature verification prices data is still trusted and secure.
 
-Add some text about the fact that we don't support fetching historical prices from Arweave.
+We strongly recommend to use the default fetching mechanism. But if you want to fetch data directly from Arweave you can do it by initialising a new LimestoneAPI client and setting `useCache` option to `false`.
 
 ```js
-// TODO: add response
+const LimestoneApi = require("limestone-api/lib/limestone-api");
+
+const limestoneArweaveClient = LimestoneApi.default.init({
+  useCache: false,
+});
+
+const price = await limestoneArweaveClient.getPrice("AR");
+
+console.log(price.value); // AR price value fetched directly from Arweave
 ```
 
 ----------------------------------------------
 
 ## 📅 Roadmap
 
-### Fluent Interface [Work in progress]
+### Fluent Interface
 We currently work on a fluent interface to make Limestone API even easier to use.
-You can [see examples](examples/fluent-api/example.js) of fluent interface usage and let us know [what you think](mailto:dev@limestone.finance) (we would be very grateful 😉).
+You can [see examples](examples/fluent-api/example.js) of fluent interface usage and let us know [what you think](https://discord.gg/PVxBZKFr46) (we would be very grateful 😉).
 
 ## 🚀 Used By
 - [Discord bot](examples/discord-bot)
