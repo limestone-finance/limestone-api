@@ -124,6 +124,7 @@ console.log(prices["AR"].value); // latest price value for AR
 ----------------------------------------------
 
 ### Get prices for all available currencies
+To fetch latest prices for all available currencies use `getAllPrices` method.
 ```js
 const prices = await limestone.getAllPrices();
 
@@ -144,7 +145,7 @@ console.log(Object.keys(prices).length); // 158
 ----------------------------------------------
 
 ### Get historical price for a single currency
-To get historical prices you should use `getHistoricalPrice` method.
+To get historical prices use `getHistoricalPrice` method.
 ```js
 const price = await limestone.getHistoricalPrice("AR", {
   date: new Date("2021-03-30T12:35:09")
@@ -156,7 +157,7 @@ console.log(price.value); // AR price for specific time
 ----------------------------------------------
 
 ### Get historical price for several currencies
-To fetch historical price for several tokens you should pass an array of symbols to `getHistoricalPrice` method.
+To fetch historical price for several tokens pass an array of symbols to `getHistoricalPrice` method.
 ```js
 const symbols = ["AR", "BTC", "UNI", "ETH", "EUR"];
 const prices = await limestone.getHistoricalPrice(symbols, {
@@ -169,7 +170,7 @@ console.log(prices["BTC"].value); // BTC price for specific time
 ----------------------------------------------
 
 ### Get historical prices in a time range
-To fetch historical prices in a time range you should specify currency symbol as the first argument of `getHistoricalPrice` method, and `startDate`, `endDate` and `interval` as fields of the second argument.
+To fetch historical prices in a time range specify currency symbol as the first argument of `getHistoricalPrice` method, and `startDate`, `endDate` and `interval` as fields of the second argument.
 
 💡 Note: currently Limestone API supports fetching historical prices in a time range only for a single token.
 ```js
@@ -200,7 +201,9 @@ console.log(prices); // Example output below
 ----------------------------------------------
 
 ### Verify signature
-All prices saved in Limestone have a signature, thanks to which you always can verify if the price data has been submitted by the trusted provider. To do so you can set `verifySignature` option to `true` in `getPrice`, `getHistoricalPrice` or `getAllPrices` methods. If signature is invalid - error will be thrown.
+All prices saved in Limestone have a signature, thanks to which you always can verify if the price data has been submitted by the trusted provider.
+
+To do so you can set `verifySignature` option to `true` in `getPrice`, `getHistoricalPrice` or `getAllPrices` methods. If signature is invalid - error will be thrown.
 ```js
 const price = await limestone.getPrice("AR", {
   verifySignature: true,
