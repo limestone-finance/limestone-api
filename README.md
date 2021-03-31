@@ -6,15 +6,16 @@ It is a Javascript wrapper for [Limestone HTTP Api](docs/HTTP_API.md).
 
 ## ✅ Why Limestone API
 ### ✓ Secure
-Limestone pricing data is secured on Arweave and protected by provider's collateral.  
+Limestone pricing data is secured on Arweave and protected by the provider's collateral.  
 [Learn more](https://github.com/limestone-finance/limestone/blob/master/README.md)
 
 ### ✓ Easy to use
-You don't need any API keys. Just install npm package and add a single line of code.  
+You don't need any API keys. Just install the npm package and add a single line of code.  
 [Quick start](docs/QUICK_START.md)
 
-### ✓ Free
-Limestone API is absolutely free.
+### ✓ 150+ tokens
+We support BTC, ETH, AR, EUR, and many other crypto and fiat currencies.  
+[All supported currencies](docs/ALL_SUPPORTED_CURRENCIES.md)
 
 ### ✓ TypeScript Support
 Limestone API is fully written in Typescript and then compiled to JavaScript.  
@@ -45,14 +46,14 @@ import limestone from 'limestone-api';
 
 ```
 
-### Get latest price for a single currency
+### Get the latest price for a single currency
 ```js
 const price = await limestone.getPrice("AR");
 
 console.log(price.value); // latest price value for AR token (in USD)
-console.log(price.timestamp); // timestamp for the price
+console.log(price.timestamp); // the exact timestamp of the price
 ```
-💡 Note: All price values are in USD. You can fetch price data for BTC, ETH, AR, EUR and any other of [ 158 supported currencies.](docs/ALL_SUPPORTED_CURRENCIES.md)
+💡 Note: All the prices are denominated in USD. You can fetch price data for BTC, ETH, AR, EUR and any other of [ 158 supported tokens.](docs/ALL_SUPPORTED_CURRENCIES.md)
 
 <br/>
 
@@ -65,10 +66,7 @@ console.log(price.timestamp); // timestamp for the price
     timestamp: 1617146511173, // Number: Timestamp (ms) for price
     provider: "I-5rWUehEv-MjdK9gFw09RxfSLQX9DIHxG614Wf8qo0", // String: Provider arweave address
     permawebTx: "V8FUU0BG4kVOJwKWHzgkn1aEFm-eanhqqEXfPFY7pmI", // String: Arweave transaction id
-    version: "0.2", // String: Limestone version
     source: {"coingecko": 123,"sushiswap": 123.23,"uniswap": 123.35}, // Object: Price from different sources
-    signature: "KWHzgkn1a...", // String: price signature
-    providerPublicKey: "fPFY7pm..." // String: Provider public key
   }
   ```
 </details>
@@ -90,8 +88,8 @@ console.log(price.timestamp); // timestamp for the price
 
 ----------------------------------------------
 
-### Get latest price for several currencies
-To fetch prices for several currencies use `getPrice` method and pass an array with any subset of [supported currencies](docs/ALL_SUPPORTED_CURRENCIES.md).
+### Get the latest prices for several tokens
+To fetch prices for several tokens use the `getPrice` method and pass an array with any subset of [supported currencies](docs/ALL_SUPPORTED_CURRENCIES.md).
 ```js
 const prices = await limestone.getPrice(["BTC", "ETH", "AR", "EUR"]);
 
@@ -121,8 +119,8 @@ console.log(prices["AR"].value); // latest price value for AR
 
 ----------------------------------------------
 
-### Get prices for all available currencies
-To fetch latest prices for all available currencies use `getAllPrices` method.
+### Get prices for all available tokens
+To fetch the latest prices for all available tokens use the `getAllPrices` method.
 ```js
 const prices = await limestone.getAllPrices();
 
@@ -142,8 +140,8 @@ console.log(Object.keys(prices).length); // 158
 
 ----------------------------------------------
 
-### Get historical price for a single currency
-To get historical prices use `getHistoricalPrice` method.
+### Get the historical price for a single currency
+To get the historical price use the `getHistoricalPrice` method.
 ```js
 const price = await limestone.getHistoricalPrice("AR", {
   date: new Date("2021-03-30T12:35:09")
@@ -154,8 +152,8 @@ console.log(price.value); // AR price for specific time
 
 ----------------------------------------------
 
-### Get historical price for several currencies
-To fetch historical price for several tokens pass an array of symbols to `getHistoricalPrice` method.
+### Get the historical price for several currencies
+To fetch the historical price for several tokens pass an array of symbols to `getHistoricalPrice` method.
 ```js
 const symbols = ["AR", "BTC", "UNI", "ETH", "EUR"];
 const prices = await limestone.getHistoricalPrice(symbols, {
@@ -167,8 +165,8 @@ console.log(prices["BTC"].value); // BTC price for specific time
 
 ----------------------------------------------
 
-### Get historical prices in a time range
-To fetch historical prices in a time range specify currency symbol as the first argument of `getHistoricalPrice` method, and `startDate`, `endDate` and `interval` as fields of the second argument.
+### Get the historical prices in a time range
+To fetch the historical prices in a time range specify currency symbol as the first argument of the `getHistoricalPrice` method, and `startDate`, `endDate` and `interval` as fields of the second argument.
 
 💡 Note: currently Limestone API supports fetching historical prices in a time range only for a single currency.
 ```js
@@ -212,9 +210,9 @@ console.log(price.value);
 ----------------------------------------------
 
 ### Get prices from Arweave
-By default Limestone API fetches data from limestone cache layer. It works way faster than fetching directly from Arweave Blockchain. Even so, thanks to signature verification prices data is still trusted and secure.
+By default, Limestone API fetches data from the Limestone cache layer. It works way faster than fetching directly from Arweave Blockchain. Even so, thanks to signature verification prices data is still trusted and secure.
 
-We strongly recommend to use the default fetching mechanism. But if you want to fetch data directly from Arweave you can do it by initialising a new LimestoneAPI client and setting `useCache` option to `false`.
+We strongly recommend using the default fetching mechanism. But if you want to fetch data directly from Arweave you can do it by initialising a new `LimestoneApi` client and setting `useCache` option to `false`.
 
 ```js
 const LimestoneApi = require("limestone-api/lib/limestone-api");
@@ -236,7 +234,7 @@ console.log(price.value); // AR price value fetched directly from Arweave
 We currently work on a fluent interface to make Limestone API even easier to use.
 You can [see examples](examples/fluent-api/example.js) of fluent interface usage and let us know [what you think](https://discord.gg/PVxBZKFr46) (we would be very grateful 😉).
 
-## 🚀 Used By
+## 🚀 Examples
 - [Discord bot](examples/discord-bot)
 - [Web app](https://github.com/limestone-finance/limestone)
 
