@@ -13,3 +13,5 @@ limestone.getPrice("AR").then((price) => {
   console.log(price.value);
 });
 ```
+
+Explore [limestone api](../README.md#-usage)
