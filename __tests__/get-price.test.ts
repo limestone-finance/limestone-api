@@ -1,6 +1,13 @@
 import limestone from "../src/index";
 
-const MAX_TIME_DIFF = 30000; // 30s
+const MAX_TIME_DIFF = 90000; // 90s
+
+const shouldNotHaveTechProps = (price: any) => {
+  const technicalProps = ["signature", "version", "providerPublicKey"];
+  for (const prop of technicalProps) {
+    expect(price).not.toHaveProperty(prop);
+  }
+};
 
 describe("Test getPrice method", () => {
   test("Should get AR price", async () => {
@@ -23,6 +30,14 @@ describe("Test getPrice method", () => {
     expect(Date.now() - price.timestamp).toBeLessThan(MAX_TIME_DIFF);
   });
 
+  test("Should not have technical properties", async () => {
+    const symbol = "ETH";
+    const price: any = await limestone.getPrice(symbol);
+
+    expect(price).toBeDefined();
+    shouldNotHaveTechProps(price);
+  });
+
   test("Should get prices for AR, ETH and BTC", async () => {
     const symbols = ["AR", "ETH", "BTC"];
     const prices: any = await limestone.getPrice(symbols);
@@ -37,16 +52,25 @@ describe("Test getPrice method", () => {
     expect(Date.now() - prices["BTC"].timestamp).toBeLessThan(MAX_TIME_DIFF);
   });
 
+  test("Should not have technical properties", async () => {
+    const symbols = ["AR", "ETH", "BTC"];
+    const prices: any = await limestone.getPrice(symbols);
+
+    for (const symbol of symbols) {
+      expect(prices[symbol]).toBeDefined();
+      shouldNotHaveTechProps(prices[symbol]);
+    }
+  });
+
   test("Should get prices for AR, ETH, BNB, EUR, BTC and verify signature", async () => {
     const symbols = ["AR", "ETH", "BNB", "EUR", "BTC"];
     const prices: any = await limestone.getPrice(symbols, {
       verifySignature: true,
     });
-    expect(prices["AR"]).toBeDefined();
-    expect(prices["ETH"]).toBeDefined();
-    expect(prices["BNB"]).toBeDefined();
-    expect(prices["EUR"]).toBeDefined();
-    expect(prices["BTC"]).toBeDefined();
+
+    for (const symbol of symbols) {
+      expect(prices[symbol]).toBeDefined();
+    }
   });
 
   test("Should verify signature for latest ETH price", async () => {

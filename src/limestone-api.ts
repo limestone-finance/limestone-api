@@ -1,28 +1,20 @@
 import _ from "lodash";
 import ArweaveProxy from "./proxies/arweave-proxy";
 import CacheProxy from "./proxies/cache-proxy";
-import { LimestoneApiConfig, PriceData, PriceDataWithSignature } from "./types";
 import { version } from "./config.json";
+import PriceNotFoundError from "./errors/price-not-found";
+import {
+  PriceData,
+  GetPriceOptions,
+  LimestoneApiConfig,
+  PriceDataWithSignature,
+  GetHistoricalPriceOptions,
+  GetHistoricalPriceForIntervalOptions } from "./types";
 
 const LIMESTON_API_DEFAULTS = {
   provider: "limestone",
   useCache: true,
 };
-
-interface GetPriceOptions {
-  provider?: string;
-  verifySignature?: boolean;
-}
-
-interface GetHistoricalPriceOptions extends GetPriceOptions {
-  date: Date;
-}
-
-interface GetHistoricalPriceForIntervalOptions extends GetPriceOptions {
-  startDate: Date;
-  endDate: Date;
-  interval: number; // ms
-}
 
 export default class LimestoneApi {
   private defaultProvider: string;
@@ -70,7 +62,7 @@ export default class LimestoneApi {
   async getPrice(
     symbol: string,
     opts?: GetPriceOptions,
-  ): Promise<PriceData | undefined>;
+  ): Promise<PriceData>;
   async getPrice(
     symbols: string[],
     opts?: GetPriceOptions,
@@ -103,25 +95,51 @@ export default class LimestoneApi {
   }
 
   /**
-   * Returns the historical price for a token or a list of tokens
+   * Returns the historical price for a single token
    *
    * @remarks
-   * Some remark
+   * Full list of supported tokens is available at
+   * {@link https://github.com/limestone-finance/limestone-api/blob/main/ALL_SUPPORTED_TOKENS.md}
    *
    * @param symbol - Token symbol
-   * @param opts - Options
-   * @returns The historical price for symbol
+   * @param opts - Options object. It must contain the date property.
+   * * date: Date for the historical price (date)
+   * @returns The historical price for token
    *
-   * @beta
    */
   async getHistoricalPrice(
     symbol: string,
     opts: GetHistoricalPriceOptions,
-  ): Promise<PriceData | undefined>;
+  ): Promise<PriceData>;
+  /**
+   * Returns the historical prices for a token in a time range with the specified interval
+   *
+   * @remarks
+   * This method can be used to display charts with historical prices.
+   * Full list of supported tokens is available at
+   * {@link https://github.com/limestone-finance/limestone-api/blob/main/ALL_SUPPORTED_TOKENS.md}
+   *
+   * @param symbol - Token symbol
+   * @param opts - Options object. It must contain startDate, endDate, and interval properties.
+   * * startDate: Start time for the time range (date)
+   * * endDate: End time for the time range (date)
+   * * interval: Interval in miliseconds (number)
+   * @returns The historical prices for the symbol with the passed interval
+   *
+   */
   async getHistoricalPrice(
     symbol: string,
     opts: GetHistoricalPriceForIntervalOptions,
   ): Promise<PriceData[]>;
+  /**
+   * Returns the historical prices for several tokens
+   *
+   * @param symbols - Array of token symbols
+   * @param opts - Options object. It must contain the date property.
+   * * date: Date for the historical price (date)
+   * @returns The historical prices for several tokens
+   *
+   */
   async getHistoricalPrice(
     symbols: string[],
     opts: GetHistoricalPriceOptions,
@@ -168,7 +186,17 @@ export default class LimestoneApi {
     const provider = _.defaultTo(opts.provider, this.defaultProvider);
 
     if (this.useCache) {
-      return await this.cacheProxy.getPriceForManyTokens({ provider });
+      const pricesObj =
+        await this.cacheProxy.getPriceForManyTokens({ provider });
+      
+      // Signature verification
+      if (_.defaultTo(opts.verifySignature, this.verifySignature)) {
+        for (const symbol of _.keys(pricesObj)) {
+          this.assertValidSignature(pricesObj[symbol]);
+        }
+      }
+
+      return convertPricesToUserFacingFormat(pricesObj);
     } else {
       return await this.getPricesFromArweave(provider);
     }
@@ -178,7 +206,7 @@ export default class LimestoneApi {
     symbol: string;
     provider: string;
     shouldVerifySignature: boolean;
-  }): Promise<PriceData | undefined> {
+  }): Promise<PriceData> {
     if (this.useCache) {
       // Getting price from cache
       const price = await this.cacheProxy.getPrice(
@@ -187,7 +215,12 @@ export default class LimestoneApi {
       if (args.shouldVerifySignature && price !== undefined) {
         await this.assertValidSignature(price);
       }
-      return price;
+
+      if (price === undefined) {
+        throw new PriceNotFoundError(args.symbol);
+      }
+
+      return convertToUserFacingFormat(price);
     } else {
       // Getting price from arweave
 
@@ -197,24 +230,16 @@ export default class LimestoneApi {
           _.pick(args, ["provider", "symbol"]),
         );
         if (price !== undefined) {
-          return price;
+          return convertToUserFacingFormat(price);
         }
       }
 
       // Getting price from arweave in a "standard" way (from data)
       const prices = await this.getPricesFromArweave(args.provider);
       const priceForSymbol = prices[args.symbol];
-      return priceForSymbol;
+      return convertToUserFacingFormat(priceForSymbol);
     }
   }
-
-  // private async getLatestPriceForManySymbols(args: {
-  //   symbols: string[],
-  //   provider: string,
-  //   shouldVerifySignature: boolean,
-  // }): Promise<{ [token: string]: PriceData }> {
-
-  // }
 
   private async getPriceForManyTokens(args: {
     symbols: string[];
@@ -235,7 +260,7 @@ export default class LimestoneApi {
         }
       }
 
-      return pricesObj;
+      return convertPricesToUserFacingFormat(pricesObj);
     } else {
       if (args.timestamp !== undefined) {
         throw new Error(
@@ -243,7 +268,9 @@ export default class LimestoneApi {
         );
       }
       const allPrices = await this.getPricesFromArweave(args.provider);
-      return _.pick(allPrices, args.symbols);
+      const pricesObj = _.pick(allPrices, args.symbols);
+
+      return convertPricesToUserFacingFormat(pricesObj);
     }
   }
 
@@ -277,7 +304,7 @@ export default class LimestoneApi {
       };
     }
 
-    return pricesObj;
+    return convertPricesToUserFacingFormat(pricesObj);
   }
 
   private async getHistoricalPriceForOneSymbol(args: {
@@ -285,7 +312,7 @@ export default class LimestoneApi {
     provider: string;
     timestamp: number;
     shouldVerifySignature: boolean;
-  }): Promise<PriceData | undefined> {
+  }): Promise<PriceData> {
     if (this.useCache) {
       const price = await this.cacheProxy.getPrice(
         _.pick(args, ["symbol", "provider", "timestamp"]),
@@ -296,7 +323,11 @@ export default class LimestoneApi {
         await this.assertValidSignature(price);
       }
 
-      return price;
+      if (price === undefined) {
+        throw new PriceNotFoundError(args.symbol);
+      }
+
+      return convertToUserFacingFormat(price);
     } else {
       // TODO: we cannot query ArGQL with timestamp camparators like timestamp_gt
       // But in future we can think of querying based on block numbers
@@ -309,7 +340,7 @@ export default class LimestoneApi {
   private async tryToGetPriceFromGQL(args: {
     symbol: string;
     provider: string;
-  }): Promise<PriceData | undefined> {
+  }): Promise<PriceData> {
     const { address } = await this.arweaveProxy.getProviderDetails(
       args.provider,
     );
@@ -321,7 +352,7 @@ export default class LimestoneApi {
     });
 
     if (response === undefined || response.tags[args.symbol] === undefined) {
-      return undefined;
+      throw new PriceNotFoundError(args.symbol);
     } else {
       return {
         symbol: args.symbol,
@@ -329,7 +360,6 @@ export default class LimestoneApi {
         permawebTx: response.permawebTx,
         timestamp: Number(response.tags.timestamp),
         provider: address,
-        version: response.tags.version,
       };
     }
   }
@@ -360,7 +390,7 @@ export default class LimestoneApi {
         }
       }
 
-      return prices;
+      return prices.map(convertToUserFacingFormat);
     } else {
       // TODO: we cannot query ArGQL with timestamp camparators like timestamp_gt
       // But in future we can think of querying based on block numbers
@@ -414,4 +444,21 @@ export default class LimestoneApi {
       );
     }
   }
+}
+
+function convertToUserFacingFormat(
+  price: PriceDataWithSignature | PriceData): PriceData {
+    const result = _.omit(price, ["version", "signature", "providerPublicKey"]);
+    return result as PriceData;
+  }
+
+function convertPricesToUserFacingFormat(prices: {
+  [symbol: string]: PriceDataWithSignature | PriceData;
+}): { [symbol: string]: PriceData } {
+  const userFacingPricesObj: { [symbol: string]: PriceData } = {};
+  for (const symbol of _.keys(prices)) {
+    userFacingPricesObj[symbol] = convertToUserFacingFormat(prices[symbol]);
+  }
+
+  return userFacingPricesObj;
 }

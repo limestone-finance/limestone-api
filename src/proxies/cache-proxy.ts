@@ -1,5 +1,5 @@
 import axios from "axios";
-import { PriceData, PriceDataWithSignature } from "../types";
+import { PriceDataWithSignature } from "../types";
 
 export default class CacheProxy {
   cacheApiUrl: string = "https://api.limestone.finance/prices";
