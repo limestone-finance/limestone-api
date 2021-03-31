@@ -1,7 +1,7 @@
 {
-  "name": "limestone-api-v2-beta",
-  "version": "0.2.9",
-  "description": "An api to access trusted token pricing data secured on Arweave and protected by provider's collateral. ",
+  "name": "limestone-api",
+  "version": "0.2.10",
+  "description": "Javascript library for fetching trusted token pricing data from Limestone data ecosystem",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
@@ -17,21 +17,43 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jakub-wojciechowski/limestone-api.git"
+    "url": "git+https://github.com/limestone-finance/limestone-api.git"
   },
   "keywords": [
     "price",
     "tokens",
     "arweave",
     "api",
-    "oracle"
+    "oracle",
+    "market",
+    "crypto",
+    "data",
+    "finance",
+    "defi",
+    "pricing",
+    "usd",
+    "AR",
+    "BTC",
+    "USDT",
+    "ETH",
+    "WETH",
+    "WBTC",
+    "coin",
+    "Bitcoin",
+    "Ethereum",
+    "currency",
+    "cryptocurrency"
   ],
-  "author": "Jakub Wojciechowski",
+  "author": "Limestone Team <dev@limestone.finance>",
+  "contributors": [
+    "Jakub Wojciechowski <jakub@limestone.finance>",
+    "Alex Suvorov <alex@limestone.finance>"
+  ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/jakub-wojciechowski/limestone-api/issues"
+    "url": "https://github.com/limestone-finance/limestone-api/issues"
   },
-  "homepage": "https://github.com/jakub-wojciechowski/limestone-api#readme",
+  "homepage": "https://github.com/limestone-finance/limestone-api#readme",
   "devDependencies": {
     "@types/jest": "^26.0.20",
     "@types/lodash": "^4.14.168",
