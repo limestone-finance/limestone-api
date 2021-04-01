@@ -41,7 +41,7 @@ describe("Test getPrice method", () => {
   test("Should get prices for AR, ETH and BTC", async () => {
     const symbols = ["AR", "ETH", "BTC"];
     const prices: any = await limestone.getPrice(symbols);
-    
+
     expect(prices["AR"]).toBeDefined();
     expect(prices["ETH"]).toBeDefined();
     expect(prices["BTC"]).toBeDefined();
@@ -62,8 +62,8 @@ describe("Test getPrice method", () => {
     }
   });
 
-  test("Should get prices for AR, ETH, BNB, EUR, BTC and verify signature", async () => {
-    const symbols = ["AR", "ETH", "BNB", "EUR", "BTC"];
+  test("Should get prices for AR, ETH, BNB, BTC and verify signature", async () => {
+    const symbols = ["AR", "ETH", "BNB", "BTC"];
     const prices: any = await limestone.getPrice(symbols, {
       verifySignature: true,
     });
@@ -81,5 +81,5 @@ describe("Test getPrice method", () => {
 
     expect(price).toBeDefined();
   });
-  
+
 });
