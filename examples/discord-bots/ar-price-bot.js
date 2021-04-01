@@ -1,10 +1,10 @@
-const Limestone = require("../../index.js");
+const limestone = require("../../lib/index.js");
 const { runSimpleDiscordBot } = require("./simple-discord-bot");
 
 runSimpleDiscordBot({
   titleGetter: async () => {
-    const priceFeed = await Limestone.getPrice("AR");
-    return `$${priceFeed.price} = 1 AR`;
+    const priceFeed = await limestone.getPrice("AR");
+    return `$${priceFeed.value.toFixed(2)} = 1 AR`;
   },
   botToken: process.env.BOT_TOKEN,
 });

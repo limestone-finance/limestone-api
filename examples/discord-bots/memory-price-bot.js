@@ -1,5 +1,5 @@
 const axios = require("axios");
-const Limestone = require("../../index.js");
+const limestone = require("../../lib/index.js");
 const { runSimpleDiscordBot } = require("./simple-discord-bot");
 
 async function getCurrentARPricePerGB() {
@@ -9,9 +9,9 @@ async function getCurrentARPricePerGB() {
 
 runSimpleDiscordBot({
   titleGetter: async () => {
-    const priceFeed = await Limestone.getPrice("AR");
+    const priceFeed = await limestone.getPrice("AR");
     const arPricePerGB = await getCurrentARPricePerGB();
-    const usdPricePerGB = arPricePerGB * priceFeed.price;
+    const usdPricePerGB = arPricePerGB * priceFeed.value;
     const usdPricePerGBFormatted = +usdPricePerGB.toFixed(2);
     return `$${usdPricePerGBFormatted} = 1 GB`;
   },

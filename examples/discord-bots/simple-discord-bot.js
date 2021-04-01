@@ -29,7 +29,7 @@ function runSimpleDiscordBot({ titleGetter, botToken, interval = 5000 }) {
         console.log("Error fetching title for discord bot:");
         console.log(err);
       }
-    }, 5000);
+    }, interval);
   });
 
   Client.login(botToken);
