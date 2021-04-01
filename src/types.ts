@@ -1,3 +1,5 @@
+export type ConvertableToDate = Date | number | string;
+
 export interface LimestoneApiConfig {
   useCache?: boolean;
   defaultProvider?: string; // Name of default provider
@@ -31,11 +33,11 @@ export interface GetPriceOptions {
 };
 
 export interface GetHistoricalPriceOptions extends GetPriceOptions {
-  date: Date;
+  date: ConvertableToDate;
 };
 
 export interface GetHistoricalPriceForIntervalOptions extends GetPriceOptions {
-  startDate: Date;
-  endDate: Date;
+  startDate: ConvertableToDate;
+  endDate: ConvertableToDate;
   interval: number; // ms
 };

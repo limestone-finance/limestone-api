@@ -14,11 +14,10 @@ const shouldNotHaveTechProps = (price: any) => {
 describe("Test getAllPrices method", () => {
   test("Should get all prices", async () => {
     const prices = await limestone.getAllPrices();
-    
+
     expect(Object.keys(prices)).toContain("BTC");
     expect(Object.keys(prices)).toContain("ETH");
     expect(Object.keys(prices)).toContain("AR");
-    expect(Object.keys(prices)).toContain("EUR");
     expect(Object.keys(prices).length).toBeGreaterThan(100);
     expect(Date.now() - prices["AR"].timestamp).toBeLessThan(MAX_TIME_DIFF);
     expect(Date.now() - prices["BTC"].timestamp).toBeLessThan(MAX_TIME_DIFF);
