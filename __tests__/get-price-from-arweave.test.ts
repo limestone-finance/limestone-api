@@ -2,6 +2,13 @@ import LimestoneApi from "../src/limestone-api";
 
 const MAX_TIME_DIFF = 7200 * 1000; // 2 hours
 
+const shouldNotHaveTechProps = (price: any) => {
+  const technicalProps = ["signature", "version", "providerPublicKey"];
+  for (const prop of technicalProps) {
+    expect(price).not.toHaveProperty(prop);
+  }
+};
+
 describe("Test getPrice method", () => {
   const limestoneApiClient: LimestoneApi = LimestoneApi.init({
     useCache: false,
@@ -27,6 +34,24 @@ describe("Test getPrice method", () => {
     expect(Date.now() - price.timestamp).toBeLessThan(MAX_TIME_DIFF);
   });
 
+  test("Should not have technical properties (ETH)", async () => {
+    const symbol = "ETH";
+    const price: any = await limestoneApiClient.getPrice(symbol);
+
+    expect(price).toBeDefined();
+    expect(price.symbol).toBe(symbol);
+    shouldNotHaveTechProps(price);
+  });
+
+  test("Should not have technical properties (AR)", async () => {
+    const symbol = "AR";
+    const price: any = await limestoneApiClient.getPrice(symbol);
+
+    expect(price).toBeDefined();
+    expect(price.symbol).toBe(symbol);
+    shouldNotHaveTechProps(price);
+  });
+
   test("Should get ETH, BTC, and AR price from arweave", async () => {
     const symbols = ["ETH", "BTC", "AR"];
     const prices: any = await limestoneApiClient.getPrice(symbols);
@@ -37,6 +62,7 @@ describe("Test getPrice method", () => {
     expect(prices["AR"].value).toBeGreaterThan(0.1);
     expect(prices["ETH"].value).toBeGreaterThan(100);
     expect(prices["BTC"].value).toBeGreaterThan(1000);
+    shouldNotHaveTechProps(prices["BTC"]);
     expect(Date.now() - prices["ETH"].timestamp).toBeLessThan(MAX_TIME_DIFF);
     expect(Date.now() - prices["BTC"].timestamp).toBeLessThan(MAX_TIME_DIFF);
   });
