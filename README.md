@@ -6,19 +6,19 @@ It is a Javascript wrapper for [Limestone HTTP Api](docs/HTTP_API.md).
 
 ## ✅ Why Limestone API
 ### ✓ Secure
-Limestone pricing data is secured on Arweave and protected by the provider's collateral.  
+Limestone pricing data is secured on Arweave and protected by the provider's collateral.
 [Learn more](https://github.com/limestone-finance/limestone/blob/master/README.md)
 
 ### ✓ Easy to use
-You don't need any API keys. Just install the npm package and add a single line of code.  
+You don't need any API keys. Just install the npm package and add a single line of code.
 [Quick start](docs/QUICK_START.md)
 
 ### ✓ 150+ tokens
-We support BTC, ETH, AR, EUR, and many other crypto and fiat currencies.  
+We support BTC, ETH, AR, EUR, and many other crypto and fiat currencies.
 [All supported tokens](docs/ALL_SUPPORTED_TOKENS.md)
 
 ### ✓ TypeScript Support
-Limestone API is fully written in Typescript and then compiled to JavaScript.  
+Limestone API is fully written in Typescript and then compiled to JavaScript.
 [Source code](https://github.com/limestone-finance/limestone-api)
 
 ## 📦 Installation
@@ -144,11 +144,13 @@ console.log(Object.keys(prices).length); // 158
 To get the historical price use the `getHistoricalPrice` method.
 ```js
 const price = await limestone.getHistoricalPrice("AR", {
-  date: new Date("2021-03-30T12:35:09")
+  date: "2021-03-30T12:35:09", // Any convertable to date type
 });
 
 console.log(price.value); // AR price for specific time
 ```
+
+💡 Note: `date` argument must be convertable to Date type. You may pass date (e.g. `new Date(2021-04-01)`), timestamp (e.g. `1617709771289`), or just string (e.g. `2021-04-01` or `2021-04-01T12:30:58`).
 
 ----------------------------------------------
 
@@ -157,7 +159,7 @@ To fetch the historical price for several tokens pass an array of symbols to `ge
 ```js
 const symbols = ["AR", "BTC", "UNI", "ETH", "EUR"];
 const prices = await limestone.getHistoricalPrice(symbols, {
-  date: new Date("2021-03-30T12:35:09")
+  date: "2021-03-30T12:35:09",
 });
 
 console.log(prices["BTC"].value); // BTC price for specific time
@@ -171,8 +173,8 @@ To fetch the historical prices in a time range specify token symbol as the first
 💡 Note: currently Limestone API supports fetching historical prices in a time range only for a single token.
 ```js
 const prices = await limestone.getHistoricalPrice("AR", {
-  startDate: new Date("2021-03-29T12:35:09"),
-  endDate: new Date("2021-03-30T12:35:09"),
+  startDate: "2021-03-29T12:35:09",
+  endDate: "2021-03-30T12:35:09",
   interval: 3600 * 1000, // 1 hour
 });
 
@@ -193,6 +195,8 @@ console.log(prices); // Example output below
 ]
 */
 ```
+
+💡 Note: `startDate` and `endDate` argument must be convertable to Date type.
 
 ----------------------------------------------
 
