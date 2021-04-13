@@ -1,7 +1,7 @@
 import _ from "lodash";
 import ArweaveProxy from "./proxies/arweave-proxy";
 import CacheProxy from "./proxies/cache-proxy";
-import { version } from "./config.json";
+import config from "./config";
 import PriceNotFoundError from "./errors/price-not-found";
 import {
   PriceData,
@@ -10,7 +10,10 @@ import {
   LimestoneApiConfig,
   PriceDataWithSignature,
   GetHistoricalPriceOptions,
-  GetHistoricalPriceForIntervalOptions } from "./types";
+  GetHistoricalPriceForIntervalOptions,
+} from "./types";
+
+const deepSortObject = require("deep-sort-object") as any;
 
 const LIMESTON_API_DEFAULTS = {
   provider: "limestone",
@@ -33,8 +36,8 @@ export default class LimestoneApi {
     arweaveProxy: ArweaveProxy;
   }) {
     this.arweaveProxy = opts.arweaveProxy;
-    this.cacheProxy = new CacheProxy();
-    this.version = _.defaultTo(opts.version, version);
+    this.cacheProxy = new CacheProxy(config.cacheApiUrl);
+    this.version = _.defaultTo(opts.version, config.version);
     this.verifySignature = _.defaultTo(opts.verifySignature, false);
     this.defaultProvider = _.defaultTo(
       opts.defaultProvider,
@@ -60,10 +63,7 @@ export default class LimestoneApi {
     });
   }
 
-  async getPrice(
-    symbol: string,
-    opts?: GetPriceOptions,
-  ): Promise<PriceData>;
+  async getPrice(symbol: string, opts?: GetPriceOptions): Promise<PriceData>;
   async getPrice(
     symbols: string[],
     opts?: GetPriceOptions,
@@ -187,8 +187,9 @@ export default class LimestoneApi {
     const provider = _.defaultTo(opts.provider, this.defaultProvider);
 
     if (this.useCache) {
-      const pricesObj =
-        await this.cacheProxy.getPriceForManyTokens({ provider });
+      const pricesObj = await this.cacheProxy.getPriceForManyTokens({
+        provider,
+      });
 
       // Signature verification
       if (_.defaultTo(opts.verifySignature, this.verifySignature)) {
@@ -407,20 +408,7 @@ export default class LimestoneApi {
     // TODO: Maybe we can pass the signed string in broadcaster
     // to avoid potential problems with signature verification
 
-    // It is important to have properties of price object in the
-    // same order as they have been set before signing
-    const signedData = JSON.stringify(
-      _.pick(price, [
-        "id",
-        "source",
-        "symbol",
-        "timestamp",
-        "version",
-        "value",
-        "permawebTx",
-        "provider",
-      ]),
-    );
+    const signedData = this.getPriceSignedData(price);
     const publicKey = String(price.providerPublicKey);
 
     const validSignature = await this.arweaveProxy.verifySignature({
@@ -445,6 +433,25 @@ export default class LimestoneApi {
       );
     }
   }
+
+  private getPriceSignedData(price: PriceDataWithSignature) {
+    if (price.version == "3") {
+      return JSON.stringify(deepSortObject(price));
+    } else {
+      return JSON.stringify(
+        _.pick(price, [
+          "id",
+          "source",
+          "symbol",
+          "timestamp",
+          "version",
+          "value",
+          "permawebTx",
+          "provider",
+        ]),
+      );
+    }
+  }
 }
 
 function getTimestamp(date: ConvertableToDate): number {
@@ -452,10 +459,11 @@ function getTimestamp(date: ConvertableToDate): number {
 }
 
 function convertToUserFacingFormat(
-  price: PriceDataWithSignature | PriceData): PriceData {
-    const result = _.omit(price, ["version", "signature", "providerPublicKey"]);
-    return result as PriceData;
-  }
+  price: PriceDataWithSignature | PriceData,
+): PriceData {
+  const result = _.omit(price, ["version", "signature", "providerPublicKey"]);
+  return result as PriceData;
+}
 
 function convertPricesToUserFacingFormat(prices: {
   [symbol: string]: PriceDataWithSignature | PriceData;
