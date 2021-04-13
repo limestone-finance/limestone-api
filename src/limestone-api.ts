@@ -435,21 +435,21 @@ export default class LimestoneApi {
   }
 
   private getPriceSignedData(price: PriceDataWithSignature) {
+    const priceWithPickedProps = _.pick(price, [
+      "id",
+      "source",
+      "symbol",
+      "timestamp",
+      "version",
+      "value",
+      "permawebTx",
+      "provider",
+    ]);
+
     if (price.version == "3") {
-      return JSON.stringify(deepSortObject(price));
+      return JSON.stringify(deepSortObject(priceWithPickedProps));
     } else {
-      return JSON.stringify(
-        _.pick(price, [
-          "id",
-          "source",
-          "symbol",
-          "timestamp",
-          "version",
-          "value",
-          "permawebTx",
-          "provider",
-        ]),
-      );
+      return JSON.stringify(priceWithPickedProps);
     }
   }
 }
