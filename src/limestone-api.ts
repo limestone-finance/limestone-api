@@ -1,4 +1,5 @@
 import _ from "lodash";
+import deepSortObject from "deep-sort-object";
 import ArweaveProxy from "./proxies/arweave-proxy";
 import CacheProxy from "./proxies/cache-proxy";
 import config from "./config";
@@ -12,8 +13,6 @@ import {
   GetHistoricalPriceOptions,
   GetHistoricalPriceForIntervalOptions,
 } from "./types";
-
-const deepSortObject = require("deep-sort-object") as any;
 
 const LIMESTON_API_DEFAULTS = {
   provider: "limestone",
@@ -48,9 +47,9 @@ export default class LimestoneApi {
 
   // Here we can pass any async code that we need to execute on api init
   // For example we can load provider name to address mapping here
-  static init(config: LimestoneApiConfig = {}): LimestoneApi {
+  static init(limestoneConfig: LimestoneApiConfig = {}): LimestoneApi {
     const arweaveProxy = new ArweaveProxy();
-    const optsToCopy = _.pick(config, [
+    const optsToCopy = _.pick(limestoneConfig, [
       "defaultProvider",
       "verifySignature",
       "useCache",
@@ -446,7 +445,7 @@ export default class LimestoneApi {
       "provider",
     ]);
 
-    if (price.version == "3") {
+    if (price.version === "3") {
       return JSON.stringify(deepSortObject(priceWithPickedProps));
     } else {
       return JSON.stringify(priceWithPickedProps);
