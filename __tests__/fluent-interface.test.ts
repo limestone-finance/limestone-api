@@ -25,6 +25,13 @@ describe("Should get latest AR price", () => {
     // TODO
   });
 
+  test("Should get single historical AR price for the 24 hours ago", async () => {
+    const symbol = "AR";
+    const price: any = await lQuery().symbol("AR").hoursAgo(24).get();
+
+    // TODO
+  });
+
   test("Should get historical AR price for last 7 days", async () => {
     const symbol = "AR";
     const prices: any = await lQuery().symbol("AR").forLastDays(7).get();
