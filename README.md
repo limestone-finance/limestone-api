@@ -1,5 +1,15 @@
 # Limestone API
 
+[![License](https://img.shields.io/badge/license-MIT-green)](https://choosealicense.com/licenses/mit/)
+[![Github activity](https://img.shields.io/github/commit-activity/m/limestone-finance/limestone-api)](https://discord.gg/2CT6hN6C)
+[![Discord](https://img.shields.io/discord/308323056592486420?logo=discord)](https://discord.gg/2CT6hN6C)
+[![NPM](https://img.shields.io/npm/v/limestone-api)](https://www.npmjs.com/package/limestone-api)
+[![Twitter](https://img.shields.io/twitter/follow/limestone_defi?style=social&logo=twitter)](https://twitter.com/intent/follow?screen_name=limestone_defi)
+
+
+
+
+
 Limestone API is a Javascript library for fetching trusted token pricing data from [Limestone data ecosystem](https://github.com/limestone-finance/limestone/blob/master/README.md).
 
 It is a Javascript wrapper for [Limestone HTTP Api](docs/HTTP_API.md).
