@@ -1,10 +1,10 @@
 # Limestone API
 
 [![License](https://img.shields.io/badge/license-MIT-green)](https://choosealicense.com/licenses/mit/)
-[![Github activity](https://img.shields.io/github/commit-activity/m/limestone-finance/limestone-api)](https://discord.gg/2CT6hN6C)
+[![Github activity](https://img.shields.io/github/commit-activity/m/limestone-finance/limestone-api)](https://github.com/limestone-finance/limestone-api)
 [![Discord](https://img.shields.io/discord/308323056592486420?logo=discord)](https://discord.gg/2CT6hN6C)
 [![NPM](https://img.shields.io/npm/v/limestone-api)](https://www.npmjs.com/package/limestone-api)
-[![Twitter](https://img.shields.io/twitter/follow/limestone_defi?style=social&logo=twitter)](https://twitter.com/intent/follow?screen_name=limestone_defi)
+[![Twitter](https://img.shields.io/twitter/follow/limestone_defi?style=flat&logo=twitter)](https://twitter.com/intent/follow?screen_name=limestone_defi)
 
 
 
