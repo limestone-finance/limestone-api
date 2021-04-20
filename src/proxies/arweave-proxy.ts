@@ -38,7 +38,7 @@ export default class ArweaveProxy {
 
   constructor() {
     this.arweaveClient = Arweave.init({
-      host: "arweave.net",
+      host: "arweave.dev",
       port: 443,
       protocol: "https",
     });

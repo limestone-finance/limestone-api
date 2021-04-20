@@ -1,7 +1,7 @@
 import _ from "lodash";
-import deepSortObject from "deep-sort-object";
 import ArweaveProxy from "./proxies/arweave-proxy";
 import CacheProxy from "./proxies/cache-proxy";
+import SignatureVerifier from "./signature-verifier";
 import config from "./config";
 import PriceNotFoundError from "./errors/price-not-found";
 import {
@@ -15,8 +15,9 @@ import {
 } from "./types";
 
 const LIMESTON_API_DEFAULTS = {
-  provider: "limestone",
+  defaultProvider: "limestone",
   useCache: true,
+  verifySignature: false,
 };
 
 export default class LimestoneApi {
@@ -26,6 +27,7 @@ export default class LimestoneApi {
   private verifySignature: boolean;
   private arweaveProxy: ArweaveProxy;
   private cacheProxy: CacheProxy;
+  private signatureVerifier: SignatureVerifier;
 
   constructor(opts: {
     defaultProvider?: string;
@@ -34,30 +36,27 @@ export default class LimestoneApi {
     verifySignature?: boolean;
     arweaveProxy: ArweaveProxy;
   }) {
-    this.arweaveProxy = opts.arweaveProxy;
     this.cacheProxy = new CacheProxy(config.cacheApiUrl);
+    this.arweaveProxy = opts.arweaveProxy;
+    this.signatureVerifier = new SignatureVerifier(this.arweaveProxy);
     this.version = _.defaultTo(opts.version, config.version);
-    this.verifySignature = _.defaultTo(opts.verifySignature, false);
+    this.verifySignature = _.defaultTo(
+      opts.verifySignature,
+      LIMESTON_API_DEFAULTS.verifySignature);
     this.defaultProvider = _.defaultTo(
       opts.defaultProvider,
-      LIMESTON_API_DEFAULTS.provider,
-    );
-    this.useCache = _.defaultTo(opts.useCache, LIMESTON_API_DEFAULTS.useCache);
+      LIMESTON_API_DEFAULTS.defaultProvider);
+    this.useCache = _.defaultTo(
+      opts.useCache,
+      LIMESTON_API_DEFAULTS.useCache);
   }
 
   // Here we can pass any async code that we need to execute on api init
   // For example we can load provider name to address mapping here
   static init(limestoneConfig: LimestoneApiConfig = {}): LimestoneApi {
     const arweaveProxy = new ArweaveProxy();
-    const optsToCopy = _.pick(limestoneConfig, [
-      "defaultProvider",
-      "verifySignature",
-      "useCache",
-      "version",
-    ]);
-
     return new LimestoneApi({
-      ...optsToCopy,
+      ...limestoneConfig,
       arweaveProxy,
     });
   }
@@ -193,7 +192,7 @@ export default class LimestoneApi {
       // Signature verification
       if (_.defaultTo(opts.verifySignature, this.verifySignature)) {
         for (const symbol of _.keys(pricesObj)) {
-          this.assertValidSignature(pricesObj[symbol]);
+          this.signatureVerifier.assertValidSignature(pricesObj[symbol]);
         }
       }
 
@@ -214,7 +213,7 @@ export default class LimestoneApi {
         _.pick(args, ["symbol", "provider"]),
       );
       if (args.shouldVerifySignature && price !== undefined) {
-        await this.assertValidSignature(price);
+        await this.signatureVerifier.assertValidSignature(price);
       }
 
       if (price === undefined) {
@@ -257,7 +256,7 @@ export default class LimestoneApi {
       // Signature verification
       if (args.shouldVerifySignature) {
         for (const symbol of _.keys(pricesObj)) {
-          this.assertValidSignature(pricesObj[symbol]);
+          this.signatureVerifier.assertValidSignature(pricesObj[symbol]);
         }
       }
 
@@ -321,7 +320,7 @@ export default class LimestoneApi {
 
       // Signature verification
       if (args.shouldVerifySignature && price !== undefined) {
-        await this.assertValidSignature(price);
+        await this.signatureVerifier.assertValidSignature(price);
       }
 
       if (price === undefined) {
@@ -387,7 +386,7 @@ export default class LimestoneApi {
       // Signature verification for all prices
       if (args.shouldVerifySignature) {
         for (const price of prices) {
-          await this.assertValidSignature(price);
+          await this.signatureVerifier.assertValidSignature(price);
         }
       }
 
@@ -398,57 +397,6 @@ export default class LimestoneApi {
       throw new Error(
         "Fetching historical prices from arweave is not supported",
       );
-    }
-  }
-
-  private async assertValidSignature(
-    price: PriceDataWithSignature,
-  ): Promise<void> {
-    // TODO: Maybe we can pass the signed string in broadcaster
-    // to avoid potential problems with signature verification
-
-    const signedData = this.getPriceSignedData(price);
-    const publicKey = String(price.providerPublicKey);
-
-    const validSignature = await this.arweaveProxy.verifySignature({
-      signedData,
-      signature: price.signature,
-      signerPublicKey: publicKey,
-    });
-
-    const addressFromPublicKey = await this.arweaveProxy.arweaveClient.wallets.ownerToAddress(
-      publicKey,
-    );
-
-    if (!validSignature) {
-      throw new Error("Signature verification failed for price: " + signedData);
-    }
-
-    if (addressFromPublicKey !== price.provider) {
-      throw new Error(
-        `Provider address doesn't match the public key.` +
-          ` Address: ${price.provider}.` +
-          ` Public key: ${publicKey}.`,
-      );
-    }
-  }
-
-  private getPriceSignedData(price: PriceDataWithSignature) {
-    const priceWithPickedProps = _.pick(price, [
-      "id",
-      "source",
-      "symbol",
-      "timestamp",
-      "version",
-      "value",
-      "permawebTx",
-      "provider",
-    ]);
-
-    if (price.version === "3") {
-      return JSON.stringify(deepSortObject(priceWithPickedProps));
-    } else {
-      return JSON.stringify(priceWithPickedProps);
     }
   }
 }

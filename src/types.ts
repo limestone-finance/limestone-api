@@ -20,7 +20,7 @@ export interface PriceData {
 export interface PriceDataWithSignature extends PriceData {
   signature: string;
   version?: string;
-  providerPublicKey?: string;
+  providerPublicKey: string;
 }
 
 export interface ProviderNameToAddressMapping {
