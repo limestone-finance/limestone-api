@@ -93,4 +93,12 @@ describe("Test getHistoricalPrice method", () => {
     expect(prices).toBeDefined();
     expect(prices.length).toBe(48);
   });
+
+  test("Should not found AR price for 2019-01-01", async () => {
+    await limestone.getHistoricalPrice("AR", { date: "2019-01-01" })
+      .catch(e => {
+        const msg = e.toString();
+        expect(msg.includes("Price not found for symbol: AR")).toBe(true);
+      });
+  });
 });
