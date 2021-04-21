@@ -87,7 +87,7 @@ describe("Fluent interface tests ", () => {
     expect(prices.length).toBeLessThan(25);
   });
 
-  test("Should get AR price in interval", async () => {
+  test("Should get AR price in time range", async () => {
     const prices = await query()
       .symbol("AR")
       .fromDate("2021-04-19")
