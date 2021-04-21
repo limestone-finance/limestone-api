@@ -2,7 +2,7 @@ import Arweave from "arweave/node";
 
 describe("Test arweave signing and verification", () => {
   const arweaveClient: Arweave = Arweave.init({
-    host: "arweave.net",
+    host: "arweave.dev",
     port: 443,
     protocol: "https",
   });

@@ -2,12 +2,10 @@ import axios from "axios";
 import { PriceDataWithSignature } from "../types";
 
 export default class CacheProxy {
-  cacheApiUrl: string = "https://api.limestone.finance/prices";
+  cacheApiUrl: string;
 
-  constructor(cacheApiUrl?: string) {
-    if (cacheApiUrl !== undefined) {
-      this.cacheApiUrl = cacheApiUrl;
-    }
+  constructor(cacheApiUrl: string) {
+    this.cacheApiUrl = cacheApiUrl;
   }
 
   async getPrice(args: {

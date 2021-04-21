@@ -1,5 +1,6 @@
 import Arweave from "arweave/node";
 import { run } from "ar-gql";
+import pako from "pako";
 
 interface GraphQLParams {
   type: string;
@@ -37,7 +38,7 @@ export default class ArweaveProxy {
 
   constructor() {
     this.arweaveClient = Arweave.init({
-      host: "arweave.net",
+      host: "arweave.dev",
       port: 443,
       protocol: "https",
     });
@@ -97,7 +98,8 @@ export default class ArweaveProxy {
     const data = await this.arweaveClient.transactions.getData(txId, {
       decode: true,
     });
-    const strData = Arweave.utils.bufferToString(Buffer.from(data));
+    const gunzippedData = pako.ungzip(Buffer.from(data));
+    const strData = Arweave.utils.bufferToString(gunzippedData);
 
     if (opts !== undefined && opts.parseJSON) {
       return JSON.parse(strData);
