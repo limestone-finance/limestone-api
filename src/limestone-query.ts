@@ -22,7 +22,7 @@ class LimestoneQuery {
 
   latest() {
     for (const param of ["date", "fromDate", "toDate"]) {
-      this.params[param] = undefined;
+      delete this.params[param];
     }
     return this;
   }
@@ -65,17 +65,25 @@ class LimestoneQuery {
     return this;
   }
 
-  async get() {
+  async exec() {
     const symbols = this.params.symbols;
     if (symbols.length > 0) {
       const symbolOrSymbols = symbols.length === 1 ? symbols[0] : symbols;
-      const { fromDate, toDate, date } = this.params;
+      const { fromDate, toDate, date, interval } = this.params;
 
       if ([fromDate, toDate, date].every(el => el === undefined)) {
         // Fetch the latest price
         return await limestone.getPrice(symbolOrSymbols, this.params);
       } else {
         // Fetch the historical price
+        if (interval === undefined && fromDate !== undefined) {
+          const diff = getTimeDiff(fromDate, toDate);
+          if (diff >= 24 * 3600 * 1000) {
+            this.params.interval = 3600 * 1000;
+          } else {
+            this.params.interval = 1;
+          }
+        }
         return await limestone.getHistoricalPrice(
           symbolOrSymbols,
           this.params);
@@ -88,5 +96,11 @@ class LimestoneQuery {
   }
 
 };
+
+function getTimeDiff(date1: ConvertableToDate, date2: ConvertableToDate): number {
+  const timestamp1 = new Date(date1).getTime();
+  const timestamp2 = new Date(date2).getTime()
+  return Math.abs(timestamp2 - timestamp1);
+}
 
 export default () => new LimestoneQuery;

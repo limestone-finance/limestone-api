@@ -16,7 +16,7 @@ describe("Test getHistoricalPrice method", () => {
 
     expect(price).toBeDefined();
     expect(price.symbol).toBe(symbol);
-    expect(price.value).toBe(25.923827794046517);
+    expect(price.value).toBeCloseTo(25.923827794046517);
     shouldNotHaveTechProps(price);
   });
 
@@ -28,7 +28,7 @@ describe("Test getHistoricalPrice method", () => {
 
     expect(price).toBeDefined();
     expect(price.symbol).toBe(symbol);
-    expect(price.value).toBe(2421.882615498678);
+    expect(price.value).toBeCloseTo(2421.882615498678);
     shouldNotHaveTechProps(price);
   });
 
@@ -91,7 +91,8 @@ describe("Test getHistoricalPrice method", () => {
     });
 
     expect(prices).toBeDefined();
-    expect(prices.length).toBe(48);
+    expect(prices.length).toBeGreaterThanOrEqual(48);
+    expect(prices.length).toBeLessThanOrEqual(50);
   });
 
   test("Should not found AR price for 2019-01-01", async () => {
