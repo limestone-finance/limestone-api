@@ -1,8 +1,17 @@
-import { ConvertableToDate } from "./types";
+import _ from "lodash";
+import { ConvertableToDate, GetPriceOptions, PriceData } from "./types";
 import limestone from "./index";
 
+type LimestoneQueryResult = PriceData | PriceData[] | { [token: string]: PriceData };
+
 class LimestoneQuery {
-  private params: any; // TODO improve the type later
+  private params: {
+    symbols: string[],
+    startDate?: ConvertableToDate,
+    endDate?: ConvertableToDate,
+    date?: ConvertableToDate,
+    interval?: number,
+  };
 
   constructor() {
     this.params = {
@@ -10,20 +19,20 @@ class LimestoneQuery {
     };
   }
 
-  symbol(symbol: string) {
+  symbol(symbol: string): LimestoneQuery {
     this.params.symbols = [symbol];
     return this;
   }
 
-  symbols(symbols: string[]) {
+  symbols(symbols: string[]): LimestoneQuery {
     this.params.symbols = symbols;
     return this;
   }
 
-  latest() {
-    for (const param of ["date", "fromDate", "toDate"]) {
-      delete this.params[param];
-    }
+  latest(): LimestoneQuery {
+    this.params.date = undefined;
+    this.params.startDate = undefined;
+    this.params.endDate = undefined;
     return this;
   }
 
@@ -32,66 +41,72 @@ class LimestoneQuery {
     return this;
   }
 
-  atDate(date: ConvertableToDate) {
+  atDate(date: ConvertableToDate): LimestoneQuery {
     this.params.date = date;
     return this;
   }
 
-  fromDate(date: ConvertableToDate) {
-    this.params.fromDate = date;
+  fromDate(date: ConvertableToDate): LimestoneQuery {
+    this.params.startDate = date;
     return this;
   }
 
-  toDate(date: ConvertableToDate) {
-    this.params.toDate = date;
+  toDate(date: ConvertableToDate): LimestoneQuery {
+    this.params.endDate = date;
     return this;
   }
 
-  // TODO: maybe implement a limit for 24 hours
-  forLastHours(hoursCount: number) {
-    this.params.fromDate = Date.now() - hoursCount * 3600 * 1000;
+  forLastHours(hoursCount: number): LimestoneQuery {
+    this.params.endDate = Date.now();
+    this.params.startDate =
+      this.params.endDate - hoursCount * 3600 * 1000;
     this.params.interval = 600 * 1000;
     return this;
   }
 
-  forLastDays(daysCount: number) {
-    this.params.fromDate = Date.now() - daysCount * 24 * 3600 * 1000;
+  forLastDays(daysCount: number): LimestoneQuery {
+    this.params.endDate = Date.now();
+    this.params.startDate =
+      this.params.endDate - daysCount * 24 * 3600 * 1000;
     this.params.interval = 3600 * 1000;
     return this;
   }
 
-  allSymbols() {
+  allSymbols(): LimestoneQuery {
     this.params.symbols = [];
     return this;
   }
 
-  async exec() {
+  async exec(): Promise<LimestoneQueryResult> {
     const symbols = this.params.symbols;
     if (symbols.length > 0) {
       const symbolOrSymbols = symbols.length === 1 ? symbols[0] : symbols;
-      const { fromDate, toDate, date, interval } = this.params;
+      const { startDate, endDate, date, interval } = this.params;
 
-      if ([fromDate, toDate, date].every(el => el === undefined)) {
+      if ([startDate, endDate, date].every(el => el === undefined)) {
         // Fetch the latest price
-        return await limestone.getPrice(symbolOrSymbols, this.params);
+        return await limestone.getPrice(
+          symbolOrSymbols as any,
+          this.params as any);
       } else {
         // Fetch the historical price
-        if (interval === undefined && fromDate !== undefined) {
-          const diff = getTimeDiff(fromDate, toDate);
+        if (startDate !== undefined && endDate !== undefined && interval === undefined) {
+          const diff = getTimeDiff(startDate, endDate);
           if (diff >= 24 * 3600 * 1000) {
             this.params.interval = 3600 * 1000;
           } else {
             this.params.interval = 1;
           }
         }
+
         return await limestone.getHistoricalPrice(
-          symbolOrSymbols,
-          this.params);
+          symbolOrSymbols as any,
+          this.params as any);
       }
 
     } else {
       // Fetch prices for all tokens
-      return await limestone.getAllPrices(this.params);
+      return await limestone.getAllPrices(this.params as GetPriceOptions);
     }
   }
 
