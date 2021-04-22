@@ -2,82 +2,130 @@ import _ from "lodash";
 import { ConvertableToDate, GetPriceOptions, PriceData } from "./types";
 import limestone from "./index";
 
-type LimestoneQueryResult = PriceData | PriceData[] | { [token: string]: PriceData };
+type QueryParams = {
+  symbols: string[],
+  startDate?: ConvertableToDate,
+  endDate?: ConvertableToDate,
+  date?: ConvertableToDate,
+  interval?: number,
+  latest?: boolean,
+};
 
 class LimestoneQuery {
-  private params: {
-    symbols: string[],
-    startDate?: ConvertableToDate,
-    endDate?: ConvertableToDate,
-    date?: ConvertableToDate,
-    interval?: number,
-  };
+  protected params: QueryParams;
 
-  constructor() {
+  constructor(params = {}) {
     this.params = {
       symbols: [],
+      ...params,
     };
   }
 
-  symbol(symbol: string): LimestoneQuery {
-    this.params.symbols = [symbol];
-    return this;
+  symbol(symbol: string): LimestoneQueryForSingleSymbol {
+    return new LimestoneQueryForSingleSymbol({
+      symbols: [symbol],
+    });
   }
 
-  symbols(symbols: string[]): LimestoneQuery {
-    this.params.symbols = symbols;
-    return this;
+  symbols(symbols: string[]): LimestoneQueryForSeveralSymbols {
+    return new LimestoneQueryForSeveralSymbols({ symbols });
   }
 
-  latest(): LimestoneQuery {
-    this.params.date = undefined;
-    this.params.startDate = undefined;
-    this.params.endDate = undefined;
-    return this;
+  allSymbols(): LimestoneQueryForSeveralSymbols {
+    // return this.getQueryWithUpdatedSymbols<{ [symbol: string]: PriceData }>([]);
+    return new LimestoneQueryForSeveralSymbols({
+      symbols: [],
+    });
   }
 
-  hoursAgo(hoursCount: number) {
-    this.params.date = Date.now() - hoursCount * 3600 * 1000;
-    return this;
+};
+
+class LimestoneQueryForSingleOrSeveralSymbols<QueryResultType> {
+  protected params: QueryParams;
+
+  constructor(params: QueryParams) {
+    this.params = params;
   }
 
-  atDate(date: ConvertableToDate): LimestoneQuery {
-    this.params.date = date;
-    return this;
+  // TODO: Maybe improve the type (not any)
+  protected getExecutableQuery<T>(update: any): LimestoneQueryExecutable<T> {
+    return new LimestoneQueryExecutable<T>({
+      ...this.params,
+      ...update,
+    });
   }
 
-  fromDate(date: ConvertableToDate): LimestoneQuery {
-    this.params.startDate = date;
-    return this;
+  latest(): LimestoneQueryExecutable<QueryResultType> {
+    return this.getExecutableQuery({});
   }
 
-  toDate(date: ConvertableToDate): LimestoneQuery {
-    this.params.endDate = date;
-    return this;
+  hoursAgo(hoursCount: number): LimestoneQueryExecutable<QueryResultType> {
+    return this.getExecutableQuery({
+      date: Date.now() - hoursCount * 3600 * 1000,
+    });
   }
 
-  forLastHours(hoursCount: number): LimestoneQuery {
-    this.params.endDate = Date.now();
-    this.params.startDate =
-      this.params.endDate - hoursCount * 3600 * 1000;
-    this.params.interval = 600 * 1000;
-    return this;
+  atDate(date: ConvertableToDate): LimestoneQueryExecutable<QueryResultType> {
+    return this.getExecutableQuery({ date });
   }
 
-  forLastDays(daysCount: number): LimestoneQuery {
-    this.params.endDate = Date.now();
-    this.params.startDate =
-      this.params.endDate - daysCount * 24 * 3600 * 1000;
-    this.params.interval = 3600 * 1000;
-    return this;
+}
+
+class LimestoneQueryForSingleSymbol extends LimestoneQueryForSingleOrSeveralSymbols<PriceData> {
+  constructor(params: QueryParams) {
+    super(params);
   }
 
-  allSymbols(): LimestoneQuery {
-    this.params.symbols = [];
-    return this;
+  fromDate(date: ConvertableToDate): LimestoneQueryForSingleSymbol {
+    return new LimestoneQueryForSingleSymbol({
+      ...this.params,
+      startDate: date,
+    });
   }
 
-  async exec(): Promise<LimestoneQueryResult> {
+  toDate(date: ConvertableToDate): LimestoneQueryExecutable<PriceData[]> {
+    if (this.params.startDate === undefined) {
+      throw new Error("Please specify fromDate before using toDate");
+    }
+    return this.getExecutableQuery<PriceData[]>({ endDate: date });
+  }
+
+  forLastHours(hoursCount: number): LimestoneQueryExecutable<PriceData[]> {
+    const endDate = Date.now();
+    return this.getExecutableQuery({
+      endDate,
+      startDate: endDate - hoursCount * 3600 * 1000,
+      interval: 600 * 1000,
+    });
+  }
+
+  forLastDays(daysCount: number): LimestoneQueryExecutable<PriceData[]> {
+    const endDate = Date.now();
+    return this.getExecutableQuery({
+      endDate,
+      startDate: endDate - daysCount * 24 * 3600 * 1000,
+      interval: 3600 * 1000,
+    });
+  }
+}
+
+class LimestoneQueryForSeveralSymbols extends LimestoneQueryForSingleOrSeveralSymbols<{ [symbol: string]: PriceData }> {
+  constructor(params: QueryParams) {
+    super(params);
+  }
+}
+
+class LimestoneQueryExecutable<QueryResultType> {
+  private params: QueryParams;
+
+  constructor(params = {}) {
+    this.params = {
+      symbols: [],
+      ...params,
+    };
+  }
+
+  async exec(): Promise<QueryResultType> {
     const symbols = this.params.symbols;
     if (symbols.length > 0) {
       const symbolOrSymbols = symbols.length === 1 ? symbols[0] : symbols;
@@ -87,7 +135,7 @@ class LimestoneQuery {
         // Fetch the latest price
         return await limestone.getPrice(
           symbolOrSymbols as any,
-          this.params as any);
+          this.params as any) as any;
       } else {
         // Fetch the historical price
         if (startDate !== undefined && endDate !== undefined && interval === undefined) {
@@ -99,18 +147,18 @@ class LimestoneQuery {
           }
         }
 
+        // TODO: check types
         return await limestone.getHistoricalPrice(
           symbolOrSymbols as any,
-          this.params as any);
+          this.params as any) as any;
       }
 
     } else {
       // Fetch prices for all tokens
-      return await limestone.getAllPrices(this.params as GetPriceOptions);
+      return await limestone.getAllPrices(this.params as GetPriceOptions) as any;
     }
   }
-
-};
+}
 
 function getTimeDiff(date1: ConvertableToDate, date2: ConvertableToDate): number {
   const timestamp1 = new Date(date1).getTime();
@@ -118,4 +166,4 @@ function getTimeDiff(date1: ConvertableToDate, date2: ConvertableToDate): number
   return Math.abs(timestamp2 - timestamp1);
 }
 
-export default () => new LimestoneQuery;
+export default () => new LimestoneQuery();

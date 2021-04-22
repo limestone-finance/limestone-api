@@ -11,7 +11,7 @@ describe("Fluent interface tests ", () => {
     const price = await query()
       .symbol("AR")
       .latest()
-      .exec() as PriceData;
+      .exec();
 
     expect(price).toBeDefined();
     expect(price.symbol).toBe("AR");
@@ -23,7 +23,7 @@ describe("Fluent interface tests ", () => {
     const price = await query()
       .symbol("AR")
       .atDate("2021-04-19")
-      .exec() as PriceData;
+      .exec();
 
     const timeDiff = new Date("2021-04-19").getTime() - price.timestamp;
 
@@ -38,10 +38,6 @@ describe("Fluent interface tests ", () => {
       .forLastHours(12)
       .exec();
 
-    if (!Array.isArray(prices)) {
-      throw new Error("Not array");
-    }
-
     expect(prices.length).toBeGreaterThan(70);
     expect(prices.length).toBeLessThan(74);
   });
@@ -50,7 +46,7 @@ describe("Fluent interface tests ", () => {
     const price = await query()
       .symbol("AR")
       .hoursAgo(24)
-      .exec() as PriceData;
+      .exec();
 
     const timeDiff = Date.now() - 24 * 3600 * 1000 - price.timestamp;
 
@@ -65,10 +61,6 @@ describe("Fluent interface tests ", () => {
       .forLastDays(7)
       .exec();
 
-    if (!Array.isArray(prices)) {
-      throw new Error("Not array");
-    }
-
     expect(prices.length).toBeGreaterThan(165);
     expect(prices.length).toBeLessThan(170);
   });
@@ -78,10 +70,6 @@ describe("Fluent interface tests ", () => {
       .symbol("AR")
       .forLastDays(1)
       .exec();
-
-    if (!Array.isArray(prices)) {
-      throw new Error("Not array");
-    }
 
     expect(prices.length).toBeGreaterThan(23);
     expect(prices.length).toBeLessThan(25);
@@ -94,17 +82,13 @@ describe("Fluent interface tests ", () => {
       .toDate("2021-04-20")
       .exec();
 
-    if (!Array.isArray(prices)) {
-      throw new Error("Not array");
-    }
-
     expect(prices.length).toBe(24);
   });
 
   // /********* SEVERAL SYMBOLS *********/
 
   test("Should get latest prices for AR, ETH and BTC", async () => {
-    const prices: any = await query().symbols(["AR", "ETH", "BTC"]).latest().exec();
+    const prices = await query().symbols(["AR", "ETH", "BTC"]).latest().exec();
 
     expect(prices["AR"]).toBeDefined();
     expect(prices["ETH"]).toBeDefined();
@@ -117,7 +101,7 @@ describe("Fluent interface tests ", () => {
   });
 
   test("Should get the historical price for AR, ETH and BTC", async () => {
-    const prices: any = await query()
+    const prices = await query()
       .symbols(["AR", "ETH", "BTC"])
       .atDate("2021-04-19")
       .exec();
@@ -135,7 +119,7 @@ describe("Fluent interface tests ", () => {
   // /********* ALL SYMBOLS *********/
 
   test("Should get the latest prices for all symbols", async () => {
-    const prices: any = await query().allSymbols().latest().exec();
+    const prices = await query().allSymbols().latest().exec();
 
     expect(Object.keys(prices)).toContain("BTC");
     expect(Object.keys(prices)).toContain("ETH");
