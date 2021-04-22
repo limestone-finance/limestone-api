@@ -19,13 +19,16 @@ Limestone pricing data is secured on Arweave and protected by the provider's col
 You don't need any API keys. Just install the npm package and add a single line of code.
 [Quick start](docs/QUICK_START.md)
 
-### ✓ 150+ tokens
+### ✓ 100+ tokens
 We support BTC, ETH, AR, EUR, and many other crypto and fiat currencies.
 [All supported tokens](docs/ALL_SUPPORTED_TOKENS.md)
 
 ### ✓ TypeScript Support
 Limestone API is fully written in Typescript and then compiled to JavaScript.
 [Source code](https://github.com/limestone-finance/limestone-api)
+
+## 📖 Documentation
+This readme should provide you with all the required information for starting using limestone api. If you want to see the full documentation visit [docs.limestone.finance](https://docs.limestone.finance)
 
 ## 📦 Installation
 
@@ -238,11 +241,8 @@ console.log(price.value); // AR price value fetched directly from Arweave
 
 ----------------------------------------------
 
-## 📅 Roadmap
-
 ### Fluent Interface
-We currently work on a fluent interface to make Limestone API even easier to use.
-You can [see examples](examples/fluent-api/example.js) of fluent interface usage and let us know [what you think](https://discord.gg/PVxBZKFr46) (we would be very grateful 😉).
+Limestone also implements an additional fluent interface to make it even simpler to execute some price fetching queries for popular use cases. [Learn more](docs/FLUENT_INTERFACE.md)
 
 ## 🚀 Examples
 - [Discord bot](examples/discord-bot)
