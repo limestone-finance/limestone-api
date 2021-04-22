@@ -29,36 +29,23 @@ export default class LimestoneApi {
   private cacheProxy: CacheProxy;
   private signatureVerifier: SignatureVerifier;
 
-  constructor(opts: {
-    defaultProvider?: string;
-    useCache?: boolean;
-    version?: string;
-    verifySignature?: boolean;
-    arweaveProxy: ArweaveProxy;
-  }) {
-    this.cacheProxy = new CacheProxy(config.cacheApiUrl);
-    this.arweaveProxy = opts.arweaveProxy;
+
+
+  constructor(limestoneConfig: LimestoneApiConfig = {}) {
+    this.arweaveProxy = new ArweaveProxy();
+    this.cacheProxy = new CacheProxy(
+      _.defaultTo(limestoneConfig.cacheApiUrl, config.cacheApiUrl));
     this.signatureVerifier = new SignatureVerifier(this.arweaveProxy);
-    this.version = _.defaultTo(opts.version, config.version);
+    this.version = _.defaultTo(limestoneConfig.version, config.version);
     this.verifySignature = _.defaultTo(
-      opts.verifySignature,
+      limestoneConfig.verifySignature,
       LIMESTON_API_DEFAULTS.verifySignature);
     this.defaultProvider = _.defaultTo(
-      opts.defaultProvider,
+      limestoneConfig.defaultProvider,
       LIMESTON_API_DEFAULTS.defaultProvider);
     this.useCache = _.defaultTo(
-      opts.useCache,
+      limestoneConfig.useCache,
       LIMESTON_API_DEFAULTS.useCache);
-  }
-
-  // Here we can pass any async code that we need to execute on api init
-  // For example we can load provider name to address mapping here
-  static init(limestoneConfig: LimestoneApiConfig = {}): LimestoneApi {
-    const arweaveProxy = new ArweaveProxy();
-    return new LimestoneApi({
-      ...limestoneConfig,
-      arweaveProxy,
-    });
   }
 
   async getPrice(symbol: string, opts?: GetPriceOptions): Promise<PriceData>;

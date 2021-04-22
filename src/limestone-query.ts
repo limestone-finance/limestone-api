@@ -1,6 +1,6 @@
 import _ from "lodash";
 import { ConvertableToDate, GetPriceOptions, PriceData } from "./types";
-import limestone from "./index";
+import LimestoneApi from "./limestone-api";
 
 type QueryParams = {
   symbols: string[],
@@ -11,7 +11,7 @@ type QueryParams = {
   latest?: boolean,
 };
 
-class LimestoneQuery {
+export class LimestoneQuery {
   protected params: QueryParams;
 
   constructor(params = {}) {
@@ -126,6 +126,7 @@ class LimestoneQueryExecutable<QueryResultType> {
   }
 
   async exec(): Promise<QueryResultType> {
+    const limestone = new LimestoneApi();
     const symbols = this.params.symbols;
     if (symbols.length > 0) {
       const symbolOrSymbols = symbols.length === 1 ? symbols[0] : symbols;

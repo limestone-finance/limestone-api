@@ -1,5 +1,4 @@
 import limestone from "../src/index";
-import LimestoneApi from "../src/limestone-api";
 
 const MAX_TIME_DIFF = 90000; // 90s
 const MAX_TIME_DIFF_ARWEAVE = 7200 * 1000; // 2 hours
@@ -39,7 +38,8 @@ describe("Test getAllPrices method", () => {
   });
 
   test("Should get all prices from arweave", async () => {
-    const noCacheApi = LimestoneApi.init({ useCache: false });
+    const { LimestoneApi } = limestone;
+    const noCacheApi = new LimestoneApi({ useCache: false });
     const prices = await noCacheApi.getAllPrices();
     expect(Object.keys(prices).length).toBeGreaterThan(3);
     expect(Date.now() - prices["AR"].timestamp).toBeLessThan(MAX_TIME_DIFF_ARWEAVE);

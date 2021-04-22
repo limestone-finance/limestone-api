@@ -62,7 +62,7 @@ const price = await limestone.getPrice("AR");
 console.log(price.value); // latest price value for AR token (in USD)
 console.log(price.timestamp); // the exact timestamp of the price
 ```
-💡 Note: All the prices are denominated in USD. You can fetch price data for BTC, ETH, AR, EUR and any other of [ 158 supported tokens.](docs/ALL_SUPPORTED_TOKENS.md)
+💡 Note: All the prices are denominated in USD. You can fetch price data for BTC, ETH, AR, EUR and any other of [ 100+ supported tokens.](docs/ALL_SUPPORTED_TOKENS.md)
 
 <br/>
 
@@ -144,7 +144,6 @@ console.log(prices); // Example output below
 
 console.log(prices["AR"].value); // latest price value for AR
 console.log(prices["EUR"].value); // latest price value for EUR
-console.log(Object.keys(prices).length); // 158
 ```
 
 ----------------------------------------------
@@ -228,9 +227,7 @@ By default, Limestone API fetches data from the Limestone cache layer. It works 
 We strongly recommend using the default fetching mechanism. But if you want to fetch data directly from Arweave you can do it by initialising a new `LimestoneApi` client and setting `useCache` option to `false`.
 
 ```js
-const LimestoneApi = require("limestone-api/lib/limestone-api");
-
-const limestoneArweaveClient = LimestoneApi.default.init({
+const limestoneArweaveClient = new limestone.LimestoneApi({
   useCache: false,
 });
 

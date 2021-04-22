@@ -1,4 +1,4 @@
-import query from "../src/limestone-query";
+import limestone from "../src/index";
 import { PriceData } from "../src/types";
 
 const MAX_TIME_DIFF = 90000; // 90s
@@ -8,7 +8,7 @@ describe("Fluent interface tests ", () => {
   /********* SINGLE SYMBOL *********/
 
   test("Should get AR price", async () => {
-    const price = await query()
+    const price = await limestone.query()
       .symbol("AR")
       .latest()
       .exec();
@@ -20,7 +20,7 @@ describe("Fluent interface tests ", () => {
   });
 
   test("Should get a single historical AR price", async () => {
-    const price = await query()
+    const price = await limestone.query()
       .symbol("AR")
       .atDate("2021-04-19")
       .exec();
@@ -33,7 +33,7 @@ describe("Fluent interface tests ", () => {
   });
 
   test("Should get historical AR price for the last 12 hours", async () => {
-    const prices = await query()
+    const prices = await limestone.query()
       .symbol("AR")
       .forLastHours(12)
       .exec();
@@ -43,7 +43,7 @@ describe("Fluent interface tests ", () => {
   });
 
   test("Should get single historical AR price for the 24 hours ago", async () => {
-    const price = await query()
+    const price = await limestone.query()
       .symbol("AR")
       .hoursAgo(24)
       .exec();
@@ -56,7 +56,7 @@ describe("Fluent interface tests ", () => {
   });
 
   test("Should get historical AR price for last 7 days", async () => {
-    const prices = await query()
+    const prices = await limestone.query()
       .symbol("AR")
       .forLastDays(7)
       .exec();
@@ -66,7 +66,7 @@ describe("Fluent interface tests ", () => {
   });
 
   test("Should get historical AR price for the last 1 day", async () => {
-    const prices = await query()
+    const prices = await limestone.query()
       .symbol("AR")
       .forLastDays(1)
       .exec();
@@ -76,7 +76,7 @@ describe("Fluent interface tests ", () => {
   });
 
   test("Should get AR price in time range", async () => {
-    const prices = await query()
+    const prices = await limestone.query()
       .symbol("AR")
       .fromDate("2021-04-19")
       .toDate("2021-04-20")
@@ -88,7 +88,10 @@ describe("Fluent interface tests ", () => {
   // /********* SEVERAL SYMBOLS *********/
 
   test("Should get latest prices for AR, ETH and BTC", async () => {
-    const prices = await query().symbols(["AR", "ETH", "BTC"]).latest().exec();
+    const prices = await limestone.query()
+      .symbols(["AR", "ETH", "BTC"])
+      .latest()
+      .exec();
 
     expect(prices["AR"]).toBeDefined();
     expect(prices["ETH"]).toBeDefined();
@@ -101,7 +104,7 @@ describe("Fluent interface tests ", () => {
   });
 
   test("Should get the historical price for AR, ETH and BTC", async () => {
-    const prices = await query()
+    const prices = await limestone.query()
       .symbols(["AR", "ETH", "BTC"])
       .atDate("2021-04-19")
       .exec();
@@ -119,7 +122,10 @@ describe("Fluent interface tests ", () => {
   // /********* ALL SYMBOLS *********/
 
   test("Should get the latest prices for all symbols", async () => {
-    const prices = await query().allSymbols().latest().exec();
+    const prices = await limestone.query()
+      .allSymbols()
+      .latest()
+      .exec();
 
     expect(Object.keys(prices)).toContain("BTC");
     expect(Object.keys(prices)).toContain("ETH");

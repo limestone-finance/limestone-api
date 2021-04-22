@@ -1,4 +1,4 @@
-import LimestoneApi from "../src/limestone-api";
+import limestone from "../src/index";
 
 const MAX_TIME_DIFF = 7200 * 1000; // 2 hours
 
@@ -10,7 +10,8 @@ const shouldNotHaveTechProps = (price: any) => {
 };
 
 describe("Test getPrice method", () => {
-  const limestoneApiClient: LimestoneApi = LimestoneApi.init({
+  const { LimestoneApi } = limestone;
+  const limestoneApiClient = new LimestoneApi({
     useCache: false,
   });
 
