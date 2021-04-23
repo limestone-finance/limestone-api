@@ -28,7 +28,7 @@ Limestone API is fully written in Typescript and then compiled to JavaScript.
 [Source code](https://github.com/limestone-finance/limestone-api)
 
 ## 📖 Documentation
-This readme should provide you with all the required information for starting using limestone api. If you want to see the full documentation visit [docs.limestone.finance](https://docs.limestone.finance)
+This readme should provide you with all the information you need to start using limestone api. If you want to see the full documentation, visit [docs.limestone.finance](https://docs.limestone.finance)
 
 ## 📦 Installation
 

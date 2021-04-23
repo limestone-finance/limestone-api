@@ -3,15 +3,21 @@
 Limestone API supports a fluent interface to make the price fetching even simpler.
 
 ### Importing
-To use the fluent interface you should import the limestone-query module
+To use the fluent interface you should import the limestone-api in a standard way and initialise a query calling `limestone.query()`;
 ```js
 // Using Node.js `require()`
 const limestone = require('limestone-api');
 
 // Using ES6 imports
-import limestone from 'limestone-api/limestone-query';
+import limestone from 'limestone-api';
 
 ```
+
+### Usage
+All limestone queries consits of three parts:
+- What to fetch (`symbol` or `symbols`)
+- For which date/dates (`latest`, `atDate`, `forLastHours`, `hoursAgo`, `fromDate`, `toDate`)
+- Execution (`exec`)
 
 ### Get the latest price for a single token
 ```js
