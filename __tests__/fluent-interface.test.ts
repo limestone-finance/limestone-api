@@ -1,5 +1,4 @@
 import limestone from "../src/index";
-import { PriceData } from "../src/types";
 
 const MAX_TIME_DIFF = 90000; // 90s
 
