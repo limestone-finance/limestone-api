@@ -29,8 +29,6 @@ export default class LimestoneApi {
   private cacheProxy: CacheProxy;
   private signatureVerifier: SignatureVerifier;
 
-
-
   constructor(limestoneConfig: LimestoneApiConfig = {}) {
     this.arweaveProxy = new ArweaveProxy();
     this.cacheProxy = new CacheProxy(
@@ -48,7 +46,27 @@ export default class LimestoneApi {
       LIMESTON_API_DEFAULTS.useCache);
   }
 
+  /**
+   * Returns the latest price for a single symbol
+   *
+   * @param symbol - Token symbol (string)
+   * @param opts - Optional params (object)
+   * * opts.provider: provider name (string)
+   * * opts.verifySignature: enable signature verification (boolean)
+   * @returns The latest price for the token
+   *
+   */
   async getPrice(symbol: string, opts?: GetPriceOptions): Promise<PriceData>;
+  /**
+   * Returns the latest price for several symbols
+   *
+   * @param symbols - Token symbols (array of strings)
+   * @param opts - Optional params (object)
+   * * opts.provider: provider name (string)
+   * * opts.verifySignature: enable signature verification (boolean)
+   * @returns The latest price for the tokens
+   *
+   */
   async getPrice(
     symbols: string[],
     opts?: GetPriceOptions,
@@ -87,9 +105,11 @@ export default class LimestoneApi {
    * Full list of supported tokens is available at
    * {@link https://github.com/limestone-finance/limestone-api/blob/main/ALL_SUPPORTED_TOKENS.md}
    *
-   * @param symbol - Token symbol
-   * @param opts - Options object. It must contain the date property.
-   * * date: Date for the historical price
+   * @param symbol - Token symbol (string)
+   * @param opts - Optional params (object)
+   * * opts.date: Date for the historical price
+   * * opts.provider: provider name (string)
+   * * opts.verifySignature: enable signature verification (boolean)
    * @returns The historical price for token
    *
    */
@@ -107,9 +127,11 @@ export default class LimestoneApi {
    *
    * @param symbol - Token symbol
    * @param opts - Options object. It must contain startDate, endDate, and interval properties.
-   * * startDate: Start time for the time range (date | timestamp | string)
-   * * endDate: End time for the time range (date | timestamp | string)
-   * * interval: Interval in miliseconds (number)
+   * * opts.startDate: Start time for the time range (date | timestamp | string)
+   * * opts.endDate: End time for the time range (date | timestamp | string)
+   * * opts.interval: Interval in miliseconds (number)
+   * * opts.provider: provider name (string)
+   * * opts.verifySignature: enable signature verification (boolean)
    * @returns The historical prices for the symbol with the passed interval
    *
    */
@@ -122,7 +144,9 @@ export default class LimestoneApi {
    *
    * @param symbols - Array of token symbols
    * @param opts - Options object. It must contain the date property.
-   * * date: Date for the historical price (date | timestamp | string)
+   * * opts.date: Date for the historical price (date | timestamp | string)
+   * * opts.provider: provider name (string)
+   * * opts.verifySignature: enable signature verification (boolean)
    * @returns The historical prices for several tokens
    *
    */
@@ -166,6 +190,15 @@ export default class LimestoneApi {
     }
   }
 
+  /**
+   * Returns the latest price for all the supported symbols
+   *
+   * @param opts - Optioanl options object.
+   * * opts.provider: provider name (string)
+   * * opts.verifySignature: enable signature verification (boolean)
+   * @returns The latest price for all the supported tokens
+   *
+   */
   async getAllPrices(
     opts: GetPriceOptions = {},
   ): Promise<{ [symbol: string]: PriceData }> {
