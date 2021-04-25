@@ -13,11 +13,14 @@ import limestone from 'limestone-api';
 
 ```
 
-### Usage
-All limestone queries consits of three parts:
+## Usage
+All limestone queries consits of 4 parts:
+- Query initialization (`limestone.query()`)
 - What to fetch (`symbol` or `symbols`)
 - For which date/dates (`latest`, `atDate`, `forLastHours`, `hoursAgo`, `fromDate`, `toDate`)
-- Execution (`exec`)
+- Query execution (`exec`)
+
+## Examples
 
 ### Get the latest price for a single token
 ```js
