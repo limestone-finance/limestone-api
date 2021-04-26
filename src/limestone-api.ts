@@ -129,7 +129,7 @@ export default class LimestoneApi {
    * @param opts - Options object. It must contain startDate, endDate, and interval properties.
    * * opts.startDate: Start time for the time range (date | timestamp | string)
    * * opts.endDate: End time for the time range (date | timestamp | string)
-   * * opts.interval: Interval in miliseconds (number)
+   * * opts.interval: Interval in milliseconds (number)
    * * opts.provider: provider name (string)
    * * opts.verifySignature: enable signature verification (boolean)
    * @returns The historical prices for the symbol with the passed interval
