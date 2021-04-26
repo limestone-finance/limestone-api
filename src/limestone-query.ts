@@ -54,7 +54,7 @@ export class LimestoneQuery {
   }
 }
 
-class LimestoneQueryForSingleOrSeveralSymbols<QueryResultType> {
+export class LimestoneQueryForSingleOrSeveralSymbols<QueryResultType> {
   protected params: QueryParams;
 
   constructor(params: QueryParams) {
@@ -99,7 +99,7 @@ class LimestoneQueryForSingleOrSeveralSymbols<QueryResultType> {
   }
 }
 
-class LimestoneQueryForSingleSymbol extends LimestoneQueryForSingleOrSeveralSymbols<PriceData> {
+export class LimestoneQueryForSingleSymbol extends LimestoneQueryForSingleOrSeveralSymbols<PriceData> {
   constructor(params: QueryParams) {
     super(params);
   }
@@ -161,7 +161,7 @@ class LimestoneQueryForSingleSymbol extends LimestoneQueryForSingleOrSeveralSymb
   }
 }
 
-class LimestoneQueryForSeveralSymbols extends LimestoneQueryForSingleOrSeveralSymbols<{
+export class LimestoneQueryForSeveralSymbols extends LimestoneQueryForSingleOrSeveralSymbols<{
   [symbol: string]: PriceData;
 }> {
   constructor(params: QueryParams) {
@@ -169,7 +169,7 @@ class LimestoneQueryForSeveralSymbols extends LimestoneQueryForSingleOrSeveralSy
   }
 }
 
-class LimestoneQueryExecutable<QueryResultType> {
+export class LimestoneQueryExecutable<QueryResultType> {
   private params: QueryParams;
 
   constructor(params = {}) {
