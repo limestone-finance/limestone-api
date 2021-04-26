@@ -13,7 +13,8 @@
     "prepublishOnly": "yarn test && yarn lint",
     "preversion": "yarn lint",
     "version": "git add -A src",
-    "postversion": "git push && git push --tags"
+    "postversion": "git push && git push --tags",
+    "generate-docs": "typedoc --entryDocument doc.md ./src/limestone-api.ts"
   },
   "repository": {
     "type": "git",
@@ -68,6 +69,8 @@
     "ts-node": "^9.1.1",
     "tslint": "^6.1.3",
     "tslint-config-prettier": "^1.18.0",
+    "typedoc": "^0.20.36",
+    "typedoc-plugin-markdown": "^3.7.2",
     "typescript": "^4.2.3"
   },
   "dependencies": {
