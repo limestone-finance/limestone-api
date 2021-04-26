@@ -3,12 +3,12 @@ import { ConvertableToDate, GetPriceOptions, PriceData } from "./types";
 import LimestoneApi from "./limestone-api";
 
 type QueryParams = {
-  symbols: string[],
-  startDate?: ConvertableToDate,
-  endDate?: ConvertableToDate,
-  date?: ConvertableToDate,
-  interval?: number,
-  latest?: boolean,
+  symbols: string[];
+  startDate?: ConvertableToDate;
+  endDate?: ConvertableToDate;
+  date?: ConvertableToDate;
+  interval?: number;
+  latest?: boolean;
 };
 
 export class LimestoneQuery {
@@ -52,8 +52,7 @@ export class LimestoneQuery {
       symbols: [],
     });
   }
-
-};
+}
 
 class LimestoneQueryForSingleOrSeveralSymbols<QueryResultType> {
   protected params: QueryParams;
@@ -98,7 +97,6 @@ class LimestoneQueryForSingleOrSeveralSymbols<QueryResultType> {
   atDate(date: ConvertableToDate): LimestoneQueryExecutable<QueryResultType> {
     return this.getExecutableQuery({ date });
   }
-
 }
 
 class LimestoneQueryForSingleSymbol extends LimestoneQueryForSingleOrSeveralSymbols<PriceData> {
@@ -163,7 +161,9 @@ class LimestoneQueryForSingleSymbol extends LimestoneQueryForSingleOrSeveralSymb
   }
 }
 
-class LimestoneQueryForSeveralSymbols extends LimestoneQueryForSingleOrSeveralSymbols<{ [symbol: string]: PriceData }> {
+class LimestoneQueryForSeveralSymbols extends LimestoneQueryForSingleOrSeveralSymbols<{
+  [symbol: string]: PriceData;
+}> {
   constructor(params: QueryParams) {
     super(params);
   }
@@ -191,14 +191,19 @@ class LimestoneQueryExecutable<QueryResultType> {
       const symbolOrSymbols = symbols.length === 1 ? symbols[0] : symbols;
       const { startDate, endDate, date, interval } = this.params;
 
-      if ([startDate, endDate, date].every(el => el === undefined)) {
+      if ([startDate, endDate, date].every((el) => el === undefined)) {
         // Fetch the latest price
-        return await limestone.getPrice(
+        return (await limestone.getPrice(
           symbolOrSymbols as any,
-          this.params as any) as any;
+          this.params as any,
+        )) as any;
       } else {
         // Fetch the historical price
-        if (startDate !== undefined && endDate !== undefined && interval === undefined) {
+        if (
+          startDate !== undefined &&
+          endDate !== undefined &&
+          interval === undefined
+        ) {
           const diff = getTimeDiff(startDate, endDate);
           if (diff >= 24 * 3600 * 1000) {
             this.params.interval = 3600 * 1000;
@@ -208,21 +213,26 @@ class LimestoneQueryExecutable<QueryResultType> {
         }
 
         // TODO: check types
-        return await limestone.getHistoricalPrice(
+        return (await limestone.getHistoricalPrice(
           symbolOrSymbols as any,
-          this.params as any) as any;
+          this.params as any,
+        )) as any;
       }
-
     } else {
       // Fetch prices for all tokens
-      return await limestone.getAllPrices(this.params as GetPriceOptions) as any;
+      return (await limestone.getAllPrices(
+        this.params as GetPriceOptions,
+      )) as any;
     }
   }
 }
 
-function getTimeDiff(date1: ConvertableToDate, date2: ConvertableToDate): number {
+function getTimeDiff(
+  date1: ConvertableToDate,
+  date2: ConvertableToDate,
+): number {
   const timestamp1 = new Date(date1).getTime();
-  const timestamp2 = new Date(date2).getTime()
+  const timestamp2 = new Date(date2).getTime();
   return Math.abs(timestamp2 - timestamp1);
 }
 

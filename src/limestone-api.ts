@@ -32,18 +32,22 @@ export default class LimestoneApi {
   constructor(limestoneConfig: LimestoneApiConfig = {}) {
     this.arweaveProxy = new ArweaveProxy();
     this.cacheProxy = new CacheProxy(
-      _.defaultTo(limestoneConfig.cacheApiUrl, config.cacheApiUrl));
+      _.defaultTo(limestoneConfig.cacheApiUrl, config.cacheApiUrl),
+    );
     this.signatureVerifier = new SignatureVerifier(this.arweaveProxy);
     this.version = _.defaultTo(limestoneConfig.version, config.version);
     this.verifySignature = _.defaultTo(
       limestoneConfig.verifySignature,
-      LIMESTON_API_DEFAULTS.verifySignature);
+      LIMESTON_API_DEFAULTS.verifySignature,
+    );
     this.defaultProvider = _.defaultTo(
       limestoneConfig.defaultProvider,
-      LIMESTON_API_DEFAULTS.defaultProvider);
+      LIMESTON_API_DEFAULTS.defaultProvider,
+    );
     this.useCache = _.defaultTo(
       limestoneConfig.useCache,
-      LIMESTON_API_DEFAULTS.useCache);
+      LIMESTON_API_DEFAULTS.useCache,
+    );
   }
 
   /**
