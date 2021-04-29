@@ -16,7 +16,7 @@ describe("Test getHistoricalPrice method", () => {
 
     expect(price).toBeDefined();
     expect(price.symbol).toBe(symbol);
-    expect(price.value).toBeCloseTo(25.923827794046517);
+    expect(price.value).toBeCloseTo(25.923827794046517, 15);
     shouldNotHaveTechProps(price);
   });
 
@@ -28,7 +28,9 @@ describe("Test getHistoricalPrice method", () => {
 
     expect(price).toBeDefined();
     expect(price.symbol).toBe(symbol);
-    expect(price.value).toBeCloseTo(2421.882615498678);
+    expect(price.value).toBeCloseTo(2421.882615498678, 12);
+    expect(price.timestamp).toBeLessThanOrEqual(date.getTime());
+    expect(price.timestamp).toBeGreaterThan(date.getTime() - 2 * 60 * 1000);
     shouldNotHaveTechProps(price);
   });
 

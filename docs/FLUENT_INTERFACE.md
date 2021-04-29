@@ -1,6 +1,6 @@
 # Fluent interface for limestone
 
-Limestone API supports a fluent interface to make the price fetching even simpler.
+Limestone implements a fluent interface to simplify query creation thanks to a human readable syntax.
 
 ### Importing
 To use the fluent interface you should import the limestone-api in a standard way and initialise a query calling `limestone.query()`;

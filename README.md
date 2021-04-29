@@ -64,6 +64,14 @@ console.log(price.timestamp); // the exact timestamp of the price
 ```
 💡 Note: All the prices are denominated in USD. You can fetch price data for BTC, ETH, AR, EUR and any other of [ 100+ supported tokens.](docs/ALL_SUPPORTED_TOKENS.md)
 
+You can also use a `symbols` object to explore all available symbols right in the code.
+```js
+import limestone from 'limestone-api';
+const { symbols } = limestone;
+
+const price = await limestone.getPrice(symbols.AR);
+```
+
 <br/>
 
 <details>
@@ -224,7 +232,7 @@ console.log(price.value);
 ### Get prices from Arweave
 By default, Limestone API fetches data from the Limestone cache layer. It works way faster than fetching directly from Arweave Blockchain. Even so, thanks to signature verification prices data is still trusted and secure.
 
-We strongly recommend using the default fetching mechanism. But if you want to fetch data directly from Arweave you can do it by initialising a new `LimestoneApi` client and setting `useCache` option to `false`.
+We strongly recommend using the default fetching mechanism which leverages cache to speed up queries. But if you want to fetch data directly from Arweave you can do it by initialising a new `LimestoneApi` client and setting `useCache` option to `false`.
 
 ```js
 const limestoneArweaveClient = new limestone.LimestoneApi({
@@ -239,7 +247,7 @@ console.log(price.value); // AR price value fetched directly from Arweave
 ----------------------------------------------
 
 ### Fluent Interface
-Limestone also implements an additional fluent interface to make it even simpler to execute some price fetching queries for popular use cases. [Learn more](docs/FLUENT_INTERFACE.md)
+Limestone implements a fluent interface to simplify query creation thanks to a human readable syntax. [Learn more](docs/FLUENT_INTERFACE.md)
 
 ## 🚀 Examples
 - [Discord bot](examples/discord-bot)

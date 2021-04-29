@@ -28,7 +28,7 @@ describe("Fluent interface tests ", () => {
 
     expect(price.symbol).toBe("AR");
     expect(timeDiff).toBeLessThan(MAX_TIME_DIFF);
-    expect(price.value).toBeCloseTo(24.164724409233393);
+    expect(price.value).toBeCloseTo(24.164724409233393, 15);
   });
 
   test("Should get historical AR price for the last 12 hours", async () => {
@@ -39,6 +39,10 @@ describe("Fluent interface tests ", () => {
 
     expect(prices.length).toBeGreaterThan(70);
     expect(prices.length).toBeLessThan(74);
+    for (const price of prices) {
+      expect(price.timestamp).toBeLessThan(Date.now());
+      expect(price.timestamp).toBeGreaterThan(Date.now() - 12.5 * 3600 * 1000);
+    }
   });
 
   test("Should get single historical AR price for the 24 hours ago", async () => {
@@ -62,6 +66,10 @@ describe("Fluent interface tests ", () => {
 
     expect(prices.length).toBeGreaterThan(165);
     expect(prices.length).toBeLessThan(170);
+    for (const price of prices) {
+      expect(price.timestamp).toBeLessThan(Date.now());
+      expect(price.timestamp).toBeGreaterThan(Date.now() - 7.2 * 24 * 3600 * 1000);
+    }
   });
 
   test("Should get historical AR price for the last 1 day", async () => {
@@ -72,6 +80,10 @@ describe("Fluent interface tests ", () => {
 
     expect(prices.length).toBeGreaterThan(23);
     expect(prices.length).toBeLessThan(25);
+    for (const price of prices) {
+      expect(price.timestamp).toBeLessThan(Date.now());
+      expect(price.timestamp).toBeGreaterThan(Date.now() - 1.2 * 24 * 3600 * 1000);
+    }
   });
 
   test("Should get AR price in time range", async () => {
@@ -82,6 +94,12 @@ describe("Fluent interface tests ", () => {
       .exec();
 
     expect(prices.length).toBe(24);
+    for (const price of prices) {
+      expect(price.timestamp).toBeLessThanOrEqual(
+        new Date("2021-04-20").getTime());
+      expect(price.timestamp).toBeGreaterThanOrEqual(
+        new Date("2021-04-19").getTime());
+    }
   });
 
   // /********* SEVERAL SYMBOLS *********/
@@ -110,10 +128,11 @@ describe("Fluent interface tests ", () => {
 
     const timestamp = new Date("2021-04-19").getTime();
 
-    expect(prices["AR"].value).toBeCloseTo(24.164724409233393);
-    expect(prices["ETH"].value).toBeCloseTo(2237.882213712263);
-    expect(prices["BTC"].value).toBeCloseTo(56206.13804443239);
+    expect(prices["AR"].value).toBeCloseTo(24.164724409233393, 15);
+    expect(prices["ETH"].value).toBeCloseTo(2237.882213712263, 12);
+    expect(prices["BTC"].value).toBeCloseTo(56206.13804443239, 11);
     expect(timestamp - prices["AR"].timestamp).toBeLessThan(MAX_TIME_DIFF);
+    expect(timestamp - prices["ETH"].timestamp).toBeLessThan(MAX_TIME_DIFF);
     expect(timestamp - prices["BTC"].timestamp).toBeLessThan(MAX_TIME_DIFF);
   });
 
@@ -131,6 +150,7 @@ describe("Fluent interface tests ", () => {
     expect(Object.keys(prices)).toContain("AR");
     expect(Object.keys(prices).length).toBeGreaterThan(100);
     expect(Date.now() - prices["AR"].timestamp).toBeLessThan(MAX_TIME_DIFF);
+    expect(Date.now() - prices["ETH"].timestamp).toBeLessThan(MAX_TIME_DIFF);
     expect(Date.now() - prices["BTC"].timestamp).toBeLessThan(MAX_TIME_DIFF);
   });
 

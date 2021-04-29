@@ -2,122 +2,122 @@ export default {
   /**
    * Synthetix Network Token
    */
-  "SNX": "SNX",
+  SNX: "SNX",
 
   /**
    * Basic Attention Token
    */
-  "BAT": "BAT",
+  BAT: "BAT",
 
   /**
    * Maker
    */
-  "MKR": "MKR",
+  MKR: "MKR",
 
   /**
    * Dai
    */
-  "DAI": "DAI",
+  DAI: "DAI",
 
   /**
    * yearn.finance
    */
-  "YFI": "YFI",
+  YFI: "YFI",
 
   /**
    * UNIVERSE Token
    */
-  "UNI": "UNI",
+  UNI: "UNI",
 
   /**
    * USD Coin
    */
-  "USDC": "USDC",
+  USDC: "USDC",
 
   /**
    * Chainlink
    */
-  "LINK": "LINK",
+  LINK: "LINK",
 
   /**
    * Compound
    */
-  "COMP": "COMP",
+  COMP: "COMP",
 
   /**
    * Aave
    */
-  "AAVE": "AAVE",
+  AAVE: "AAVE",
 
   /**
    * REN
    */
-  "REN": "REN",
+  REN: "REN",
 
   /**
    * Loopring
    */
-  "LRC": "LRC",
+  LRC: "LRC",
 
   /**
    * Bitcoin
    */
-  "BTC": "BTC",
+  BTC: "BTC",
 
   /**
    * Ethereum
    */
-  "ETH": "ETH",
+  ETH: "ETH",
 
   /**
    * Band Protocol
    */
-  "BAND": "BAND",
+  BAND: "BAND",
 
   /**
    * Sushi
    */
-  "SUSHI": "SUSHI",
+  SUSHI: "SUSHI",
 
   /**
    * Wrapped Bitcoin
    */
-  "WBTC": "WBTC",
+  WBTC: "WBTC",
 
   /**
    * Litecoin
    */
-  "LTC": "LTC",
+  LTC: "LTC",
 
   /**
    * EOS
    */
-  "EOS": "EOS",
+  EOS: "EOS",
 
   /**
    * TRON
    */
-  "TRX": "TRX",
+  TRX: "TRX",
 
   /**
    * OMG Network
    */
-  "OMG": "OMG",
+  OMG: "OMG",
 
   /**
    * Bitcoin Cash
    */
-  "BCH": "BCH",
+  BCH: "BCH",
 
   /**
    * Ocean Protocol
    */
-  "OCEAN": "OCEAN",
+  OCEAN: "OCEAN",
 
   /**
    * UMA
    */
-  "UMA": "UMA",
+  UMA: "UMA",
 
   /**
    * 1inch
@@ -127,575 +127,575 @@ export default {
   /**
    * Tether
    */
-  "USDT": "USDT",
+  USDT: "USDT",
 
   /**
    * Cardano
    */
-  "ADA": "ADA",
+  ADA: "ADA",
 
   /**
    * XRP
    */
-  "XRP": "XRP",
+  XRP: "XRP",
 
   /**
    * Stellar
    */
-  "XLM": "XLM",
+  XLM: "XLM",
 
   /**
    * Waves
    */
-  "WAVES": "WAVES",
+  WAVES: "WAVES",
 
   /**
    * 0x
    */
-  "ZRX": "ZRX",
+  ZRX: "ZRX",
 
   /**
    * Enjin Coin
    */
-  "ENJ": "ENJ",
+  ENJ: "ENJ",
 
   /**
    * Polygon
    */
-  "MATIC": "MATIC",
+  MATIC: "MATIC",
 
   /**
    * Cosmos
    */
-  "ATOM": "ATOM",
+  ATOM: "ATOM",
 
   /**
    * Tezos
    */
-  "XTZ": "XTZ",
+  XTZ: "XTZ",
 
   /**
    * Bancor Network Token
    */
-  "BNT": "BNT",
+  BNT: "BNT",
 
   /**
    * Solana
    */
-  "SOL": "SOL",
+  SOL: "SOL",
 
   /**
    * Australian dollar
    */
-  "AUD": "AUD",
+  AUD: "AUD",
 
   /**
    * Curve DAO Token
    */
-  "CRV": "CRV",
+  CRV: "CRV",
 
   /**
    * Polkadot
    */
-  "DOT": "DOT",
+  DOT: "DOT",
 
   /**
    * Reserve Rights Token
    */
-  "RSR": "RSR",
+  RSR: "RSR",
 
   /**
    * bZx Protocol
    */
-  "BZRX": "BZRX",
+  BZRX: "BZRX",
 
   /**
    * Kusama
    */
-  "KSM": "KSM",
+  KSM: "KSM",
 
   /**
    * Filecoin
    */
-  "FIL": "FIL",
+  FIL: "FIL",
 
   /**
    * TrueFi
    */
-  "TRU": "TRU",
+  TRU: "TRU",
 
   /**
    * Perpetual Protocol
    */
-  "PERP": "PERP",
+  PERP: "PERP",
 
   /**
    * Uservice
    */
-  "UST": "UST",
+  UST: "UST",
 
   /**
    * Cream
    */
-  "CREAM": "CREAM",
+  CREAM: "CREAM",
 
   /**
    * Binance Coin
    */
-  "BNB": "BNB",
+  BNB: "BNB",
 
   /**
    * NEO
    */
-  "NEO": "NEO",
+  NEO: "NEO",
 
   /**
    * Qtum
    */
-  "QTUM": "QTUM",
+  QTUM: "QTUM",
 
   /**
    * Ethereum Classic
    */
-  "ETC": "ETC",
+  ETC: "ETC",
 
   /**
    * ICON
    */
-  "ICX": "ICX",
+  ICX: "ICX",
 
   /**
    * VeChain
    */
-  "VET": "VET",
+  VET: "VET",
 
   /**
    * BitTorrent
    */
-  "BTT": "BTT",
+  BTT: "BTT",
 
   /**
    * Zilliqa
    */
-  "ZIL": "ZIL",
+  ZIL: "ZIL",
 
   /**
    * Monero
    */
-  "XMR": "XMR",
+  XMR: "XMR",
 
   /**
    * Zcash
    */
-  "ZEC": "ZEC",
+  ZEC: "ZEC",
 
   /**
    * Dash
    */
-  "DASH": "DASH",
+  DASH: "DASH",
 
   /**
    * Nano
    */
-  "NANO": "NANO",
+  NANO: "NANO",
 
   /**
    * Fantom
    */
-  "FTM": "FTM",
+  FTM: "FTM",
 
   /**
    * Algorand
    */
-  "ALGO": "ALGO",
+  ALGO: "ALGO",
 
   /**
    * Dogecoin
    */
-  "DOGE": "DOGE",
+  DOGE: "DOGE",
 
   /**
    * FTX Token
    */
-  "FTT": "FTT",
+  FTT: "FTT",
 
   /**
    * Euro
    */
-  "EUR": "EUR",
+  EUR: "EUR",
 
   /**
    * Siacoin
    */
-  "SC": "SC",
+  SC: "SC",
 
   /**
    * DigiByte
    */
-  "DGB": "DGB",
+  DGB: "DGB",
 
   /**
    * Pound sterling
    */
-  "GBP": "GBP",
+  GBP: "GBP",
 
   /**
    * SAND
    */
-  "SAND": "SAND",
+  SAND: "SAND",
 
   /**
    * DFI.money
    */
-  "YFII": "YFII",
+  YFII: "YFII",
 
   /**
    * DIA
    */
-  "DIA": "DIA",
+  DIA: "DIA",
 
   /**
    * THORChain (ERC20)
    */
-  "RUNE": "RUNE",
+  RUNE: "RUNE",
 
   /**
    * The Graph
    */
-  "GRT": "GRT",
+  GRT: "GRT",
 
   /**
    * Bitcoin Gold
    */
-  "BTG": "BTG",
+  BTG: "BTG",
 
   /**
    * Celsius Network
    */
-  "CEL": "CEL",
+  CEL: "CEL",
 
   /**
    * LEO Token
    */
-  "LEO": "LEO",
+  LEO: "LEO",
 
   /**
    * Arweave
    */
-  "AR": "AR",
+  AR: "AR",
 
   /**
    * Bao Finance
    */
-  "BAO": "BAO",
+  BAO: "BAO",
 
   /**
    * YottaChainMENA
    */
-  "MTA": "MTA",
+  MTA: "MTA",
 
   /**
    * Ontology
    */
-  "ONT": "ONT",
+  ONT: "ONT",
 
   /**
    * IOST
    */
-  "IOST": "IOST",
+  IOST: "IOST",
 
   /**
    * Theta Network
    */
-  "THETA": "THETA",
+  THETA: "THETA",
 
   /**
    * Binance USD
    */
-  "BUSD": "BUSD",
+  BUSD: "BUSD",
 
   /**
    * Ravencoin
    */
-  "RVN": "RVN",
+  RVN: "RVN",
 
   /**
    * Hedera Hashgraph
    */
-  "HBAR": "HBAR",
+  HBAR: "HBAR",
 
   /**
    * Horizen
    */
-  "ZEN": "ZEN",
+  ZEN: "ZEN",
 
   /**
    * Decred
    */
-  "DCR": "DCR",
+  DCR: "DCR",
 
   /**
    * Wrapped Terra
    */
-  "LUNA": "LUNA",
+  LUNA: "LUNA",
 
   /**
    * Elrond
    */
-  "EGLD": "EGLD",
+  EGLD: "EGLD",
 
   /**
    * Avalanche
    */
-  "AVAX": "AVAX",
+  AVAX: "AVAX",
 
   /**
    * Venus
    */
-  "XVS": "XVS",
+  XVS: "XVS",
 
   /**
    * Near
    */
-  "NEAR": "NEAR",
+  NEAR: "NEAR",
 
   /**
    * NEM
    */
-  "XEM": "XEM",
+  XEM: "XEM",
 
   /**
    * PancakeSwap
    */
-  "CAKE": "CAKE",
+  CAKE: "CAKE",
 
   /**
    * Bitcoin SV
    */
-  "BSV": "BSV",
+  BSV: "BSV",
 
   /**
    * OKB
    */
-  "OKB": "OKB",
+  OKB: "OKB",
 
   /**
    * Crypto.com Coin
    */
-  "CRO": "CRO",
+  CRO: "CRO",
 
   /**
    * Huobi Token
    */
-  "HT": "HT",
+  HT: "HT",
 
   /**
    * Bitmax Token
    */
-  "BTMX": "BTMX",
+  BTMX: "BTMX",
 
   /**
    * Unibright
    */
-  "UBT": "UBT",
+  UBT: "UBT",
 
   /**
    * Quant
    */
-  "QNT": "QNT",
+  QNT: "QNT",
 
   /**
    * Base Protocol
    */
-  "BASE": "BASE",
+  BASE: "BASE",
 
   /**
    * xDAI Stake
    */
-  "STAKE": "STAKE",
+  STAKE: "STAKE",
 
   /**
    * API3
    */
-  "API3": "API3",
+  API3: "API3",
 
   /**
    * Wrapped NXM
    */
-  "wNXM": "wNXM",
+  wNXM: "wNXM",
 
   /**
    * DAO Maker
    */
-  "DAO": "DAO",
+  DAO: "DAO",
 
   /**
    * DeFiPulse Index
    */
-  "DPI": "DPI",
+  DPI: "DPI",
 
   /**
    * Keep3rV1
    */
-  "KP3R": "KP3R",
+  KP3R: "KP3R",
 
   /**
    * Frax Share
    */
-  "FXS": "FXS",
+  FXS: "FXS",
 
   /**
    * Empty Set Dollar
    */
-  "ESD": "ESD",
+  ESD: "ESD",
 
   /**
    * Pickle Finance
    */
-  "PICKLE": "PICKLE",
+  PICKLE: "PICKLE",
 
   /**
    * sUSD
    */
-  "sUSD": "sUSD",
+  sUSD: "sUSD",
 
   /**
    * Tornado Cash
    */
-  "TORN": "TORN",
+  TORN: "TORN",
 
   /**
    * Morpher
    */
-  "MPH": "MPH",
+  MPH: "MPH",
 
   /**
    * Seed2Need
    */
-  "FARM": "FARM",
+  FARM: "FARM",
 
   /**
    * SocketFinance
    */
-  "SFI": "SFI",
+  SFI: "SFI",
 
   /**
    * Stox
    */
-  "STX": "STX",
+  STX: "STX",
 
   /**
    * IOTA
    */
-  "MIOTA": "MIOTA",
+  MIOTA: "MIOTA",
 
   /**
    * Voyager Token
    */
-  "VGX": "VGX",
+  VGX: "VGX",
 
   /**
    * NEXO
    */
-  "NEXO": "NEXO",
+  NEXO: "NEXO",
 
   /**
    * Amp
    */
-  "AMP": "AMP",
+  AMP: "AMP",
 
   /**
    * Mdex
    */
-  "MDX": "MDX",
+  MDX: "MDX",
 
   /**
    * SwissBorg
    */
-  "CHSB": "CHSB",
+  CHSB: "CHSB",
 
   /**
    * PayperEx
    */
-  "PAX": "PAX",
+  PAX: "PAX",
 
   /**
    * ZKSwap
    */
-  "ZKS": "ZKS",
+  ZKS: "ZKS",
 
   /**
    * Pundi X
    */
-  "NPXS": "NPXS",
+  NPXS: "NPXS",
 
   /**
    * Hydro Protocol
    */
-  "HOT": "HOT",
+  HOT: "HOT",
 
   /**
    * Japanese yen
    */
-  "JPY": "JPY",
+  JPY: "JPY",
 
   /**
    * Swiss Franc
    */
-  "CHF": "CHF",
+  CHF: "CHF",
 
   /**
    * YFValue
    */
-  "YFV": "YFV",
+  YFV: "YFV",
 
   /**
    * Swerve
    */
-  "SWRV": "SWRV",
+  SWRV: "SWRV",
 
   /**
    * YAM
    */
-  "YAM": "YAM",
+  YAM: "YAM",
 
   /**
    * KIMCHI.finance
    */
-  "KIMCHI": "KIMCHI",
+  KIMCHI: "KIMCHI",
 
   /**
    * BTC-Alpha Token
    */
-  "BAC": "BAC",
+  BAC: "BAC",
 
   /**
    * Sora
    */
-  "XOR": "XOR",
+  XOR: "XOR",
 
   /**
    * Whiteheart
    */
-  "WHITE": "WHITE",
+  WHITE: "WHITE",
 
   /**
    * cVault.finance
    */
-  "CORE": "CORE",
+  CORE: "CORE",
 
   /**
    * Frax
    */
-  "FRAX": "FRAX",
+  FRAX: "FRAX",
 
   /**
    * APY.Finance
    */
-  "APY": "APY",
+  APY: "APY",
 
   /**
    * Shopping.io
    */
-  "SPI": "SPI",
+  SPI: "SPI",
 };

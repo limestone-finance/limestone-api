@@ -212,7 +212,6 @@ export class LimestoneQueryExecutable<QueryResultType> {
           }
         }
 
-        // TODO: check types
         return (await limestone.getHistoricalPrice(
           symbolOrSymbols as any,
           this.params as any,
