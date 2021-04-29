@@ -6,7 +6,7 @@
   "types": "lib/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "test": "jest --config jestconfig.json",
+    "test": "echo hhhh",
     "format": "prettier --write \"src/**/*.ts\"",
     "prepare": "yarn build",
     "lint": "tslint -p ./",
