@@ -64,13 +64,15 @@ console.log(price.timestamp); // the exact timestamp of the price
 ```
 💡 Note: All the prices are denominated in USD. You can fetch price data for BTC, ETH, AR, EUR and any other of [ 100+ supported tokens.](docs/ALL_SUPPORTED_TOKENS.md)
 
-You can also use a `symbols` object to explore all available symbols right in the code.
+### Available symbols
+You can use a `symbols` object to explore all available symbols right in the code.
 ```js
 import limestone from 'limestone-api';
 const { symbols } = limestone;
 
 const price = await limestone.getPrice(symbols.AR);
 ```
+![limestone code example](docs/limestone-symbols-example.gif)
 
 <br/>
 
