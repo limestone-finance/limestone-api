@@ -65,7 +65,7 @@ describe("Fluent interface tests ", () => {
       .exec();
 
     expect(prices.length).toBeGreaterThan(165);
-    expect(prices.length).toBeLessThan(170);
+    expect(prices.length).toBeLessThan(171);
     for (const price of prices) {
       expect(price.timestamp).toBeLessThan(Date.now());
       expect(price.timestamp).toBeGreaterThan(Date.now() - 7.2 * 24 * 3600 * 1000);
