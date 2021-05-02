@@ -1,5 +1,15 @@
 import LimestoneApi from "./limestone-api";
+import LimestoneQuery from "./limestone-query";
+import symbols from "./symbols";
 
-const apiClient = LimestoneApi.init();
+class Limestone extends LimestoneApi {
+  query = LimestoneQuery;
+  symbols = symbols;
+  LimestoneApi = LimestoneApi;
 
-export = apiClient;
+  constructor(opts?: any) {
+    super(opts);
+  }
+}
+
+export = new Limestone();

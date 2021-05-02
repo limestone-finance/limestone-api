@@ -22,8 +22,9 @@ export default class SignatureVerifier {
       signerPublicKey: publicKey,
     });
 
-    const addressFromPublicKey =
-      await this.arweaveProxy.arweaveClient.wallets.ownerToAddress(publicKey);
+    const addressFromPublicKey = await this.arweaveProxy.arweaveClient.wallets.ownerToAddress(
+      publicKey,
+    );
 
     if (!validSignature) {
       throw new Error("Signature verification failed for price: " + signedData);

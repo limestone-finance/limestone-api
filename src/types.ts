@@ -5,6 +5,7 @@ export interface LimestoneApiConfig {
   defaultProvider?: string; // Name of default provider
   version?: string;
   verifySignature?: boolean;
+  cacheApiUrl?: string;
 }
 
 export interface PriceData {

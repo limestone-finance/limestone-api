@@ -1,5 +1,11 @@
 # Limestone API
 
+[![License](https://img.shields.io/badge/license-MIT-green)](https://choosealicense.com/licenses/mit/)
+[![Github activity](https://img.shields.io/github/commit-activity/m/limestone-finance/limestone-api)](https://github.com/limestone-finance/limestone-api)
+[![Discord](https://img.shields.io/discord/786251205008949258?logo=discord)](https://discord.gg/2CT6hN6C)
+[![NPM](https://img.shields.io/npm/v/limestone-api)](https://www.npmjs.com/package/limestone-api)
+[![Twitter](https://img.shields.io/twitter/follow/limestone_defi?style=flat&logo=twitter)](https://twitter.com/intent/follow?screen_name=limestone_defi)
+
 Limestone API is a Javascript library for fetching trusted token pricing data from [Limestone data ecosystem](https://github.com/limestone-finance/limestone/blob/master/README.md).
 
 It is a Javascript wrapper for [Limestone HTTP Api](docs/HTTP_API.md).
@@ -13,13 +19,16 @@ Limestone pricing data is secured on Arweave and protected by the provider's col
 You don't need any API keys. Just install the npm package and add a single line of code.
 [Quick start](docs/QUICK_START.md)
 
-### ✓ 150+ tokens
+### ✓ 100+ tokens
 We support BTC, ETH, AR, EUR, and many other crypto and fiat currencies.
 [All supported tokens](docs/ALL_SUPPORTED_TOKENS.md)
 
 ### ✓ TypeScript Support
 Limestone API is fully written in Typescript and then compiled to JavaScript.
 [Source code](https://github.com/limestone-finance/limestone-api)
+
+## 📖 Documentation
+This readme should provide you with all the information you need to start using limestone api. If you want to see the full documentation, visit [docs.limestone.finance](https://docs.limestone.finance)
 
 ## 📦 Installation
 
@@ -53,7 +62,17 @@ const price = await limestone.getPrice("AR");
 console.log(price.value); // latest price value for AR token (in USD)
 console.log(price.timestamp); // the exact timestamp of the price
 ```
-💡 Note: All the prices are denominated in USD. You can fetch price data for BTC, ETH, AR, EUR and any other of [ 158 supported tokens.](docs/ALL_SUPPORTED_TOKENS.md)
+💡 Note: All the prices are denominated in USD. You can fetch price data for BTC, ETH, AR, EUR and any other of [ 100+ supported tokens.](docs/ALL_SUPPORTED_TOKENS.md)
+
+### Available symbols
+You can use a `symbols` object to explore all available symbols right in the code.
+```js
+import limestone from 'limestone-api';
+const { symbols } = limestone;
+
+const price = await limestone.getPrice(symbols.AR);
+```
+![limestone code example](docs/limestone-symbols-example.gif)
 
 <br/>
 
@@ -135,7 +154,6 @@ console.log(prices); // Example output below
 
 console.log(prices["AR"].value); // latest price value for AR
 console.log(prices["EUR"].value); // latest price value for EUR
-console.log(Object.keys(prices).length); // 158
 ```
 
 ----------------------------------------------
@@ -216,12 +234,10 @@ console.log(price.value);
 ### Get prices from Arweave
 By default, Limestone API fetches data from the Limestone cache layer. It works way faster than fetching directly from Arweave Blockchain. Even so, thanks to signature verification prices data is still trusted and secure.
 
-We strongly recommend using the default fetching mechanism. But if you want to fetch data directly from Arweave you can do it by initialising a new `LimestoneApi` client and setting `useCache` option to `false`.
+We strongly recommend using the default fetching mechanism which leverages cache to speed up queries. But if you want to fetch data directly from Arweave you can do it by initialising a new `LimestoneApi` client and setting `useCache` option to `false`.
 
 ```js
-const LimestoneApi = require("limestone-api/lib/limestone-api");
-
-const limestoneArweaveClient = LimestoneApi.default.init({
+const limestoneArweaveClient = new limestone.LimestoneApi({
   useCache: false,
 });
 
@@ -232,11 +248,8 @@ console.log(price.value); // AR price value fetched directly from Arweave
 
 ----------------------------------------------
 
-## 📅 Roadmap
-
 ### Fluent Interface
-We currently work on a fluent interface to make Limestone API even easier to use.
-You can [see examples](examples/fluent-api/example.js) of fluent interface usage and let us know [what you think](https://discord.gg/PVxBZKFr46) (we would be very grateful 😉).
+Limestone implements a fluent interface to simplify query creation thanks to a human readable syntax. [Learn more](docs/FLUENT_INTERFACE.md)
 
 ## 🚀 Examples
 - [Discord bot](examples/discord-bot)
