@@ -6,7 +6,6 @@
     "declaration": true,
     "outDir": "./lib",
     "resolveJsonModule": true,
-    // "removeComments": false,
     "esModuleInterop": true
   },
   "include": ["src/**/*"],
