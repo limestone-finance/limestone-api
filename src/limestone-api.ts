@@ -11,7 +11,7 @@ import {
   LimestoneApiConfig,
   PriceDataWithSignature,
   GetHistoricalPriceOptions,
-  GetHistoricalPriceForIntervalOptions,
+  GetHistoricalPriceForSingleTokenOptions,
 } from "./types";
 
 const LIMESTON_API_DEFAULTS = {
@@ -130,18 +130,22 @@ export default class LimestoneApi {
    * {@link https://github.com/limestone-finance/limestone-api/blob/main/ALL_SUPPORTED_TOKENS.md}
    *
    * @param symbol - Token symbol
-   * @param opts - Options object. It must contain startDate, endDate, and interval properties.
+   * @param opts - Options object.
+   * It must contain either startDate, endDate, and interval properties
+   * or offset and limit (used for pagination) properties.
    * * opts.startDate: Start time for the time range (date | timestamp | string)
    * * opts.endDate: End time for the time range (date | timestamp | string)
    * * opts.interval: Interval in milliseconds (number)
    * * opts.provider: provider name (string)
+   * * opts.offset: query offset (number)
+   * * opts.limit: query limit (number)
    * * opts.verifySignature: enable signature verification (boolean)
    * @returns The historical prices for the symbol with the passed interval
    *
    */
   async getHistoricalPrice(
     symbol: string,
-    opts: GetHistoricalPriceForIntervalOptions,
+    opts: GetHistoricalPriceForSingleTokenOptions,
   ): Promise<PriceData[]>;
   /**
    * Returns the historical prices for several tokens
@@ -174,19 +178,21 @@ export default class LimestoneApi {
         shouldVerifySignature,
       });
     } else if (typeof symbolOrSymbols === "string") {
-      if (opts.interval !== undefined) {
-        return await this.getHistoricalPricesInIntervalForOneSymbol({
+      if (opts.interval !== undefined || opts.limit !== undefined) {
+        return await this.getHistoricalPricesForOneSymbol({
           symbol: symbolOrSymbols,
           fromTimestamp: getTimestamp(opts.startDate),
           toTimestamp: getTimestamp(opts.endDate),
           interval: opts.interval,
+          offset: opts.offset,
+          limit: opts.limit,
           provider,
           shouldVerifySignature,
         });
       } else {
         return await this.getHistoricalPriceForOneSymbol({
           symbol: symbolOrSymbols,
-          timestamp: getTimestamp(opts.date),
+          timestamp: getTimestamp(opts.date) as number,
           provider,
           shouldVerifySignature,
         });
@@ -388,13 +394,15 @@ export default class LimestoneApi {
     }
   }
 
-  private async getHistoricalPricesInIntervalForOneSymbol(args: {
+  private async getHistoricalPricesForOneSymbol(args: {
     symbol: string;
     provider: string;
-    fromTimestamp: number;
-    toTimestamp: number;
-    interval: number;
+    fromTimestamp?: number;
+    toTimestamp?: number;
+    interval?: number;
     shouldVerifySignature: boolean;
+    limit?: number;
+    offset?: number;
   }): Promise<PriceData[]> {
     if (this.useCache) {
       const prices = await this.cacheProxy.getManyPrices(
@@ -404,6 +412,8 @@ export default class LimestoneApi {
           "fromTimestamp",
           "toTimestamp",
           "interval",
+          "offset",
+          "limit",
         ]),
       );
 
@@ -425,7 +435,10 @@ export default class LimestoneApi {
   }
 }
 
-function getTimestamp(date: ConvertableToDate): number {
+function getTimestamp(date?: ConvertableToDate): number | undefined {
+  if (_.isUndefined(date)) {
+    return undefined;
+  }
   return new Date(date).getTime();
 }
 

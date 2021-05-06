@@ -61,7 +61,7 @@ describe("Test getHistoricalPrice method", () => {
     expect(prices["BTC"].value).toBeGreaterThan(1000);
   });
 
-  test("Should get AR prices", async () => {
+  test("Should get AR prices in a time range", async () => {
     const symbol = "AR";
 
     const prices: any = await limestone.getHistoricalPrice(symbol, {
@@ -95,6 +95,25 @@ describe("Test getHistoricalPrice method", () => {
     expect(prices).toBeDefined();
     expect(prices.length).toBeGreaterThanOrEqual(48);
     expect(prices.length).toBeLessThanOrEqual(50);
+  });
+
+  test("Should get AR prices with paging", async () => {
+    const symbol = "AR";
+
+    const prices: any = await limestone.getHistoricalPrice(symbol, {
+      offset: 1000,
+      limit: 100,
+    });
+
+    expect(prices).toHaveLength(100);
+    expect(prices[0].timestamp).toBeLessThan(Date.now() - 995 * 60 * 1000);
+    expect(prices[0].timestamp).toBeGreaterThan(Date.now() - 1005 * 60 * 1000);
+    expect(prices[99].timestamp).toBeLessThan(Date.now() - 1095 * 60 * 1000);
+    expect(prices[99].timestamp).toBeGreaterThan(Date.now() - 1105 * 60 * 1000);
+
+    for (const price of prices) {
+      shouldNotHaveTechProps(price);
+    }
   });
 
   test("Should not found AR price for 2019-01-01", async () => {
