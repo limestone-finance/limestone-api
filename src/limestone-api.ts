@@ -131,8 +131,8 @@ export default class LimestoneApi {
    *
    * @param symbol - Token symbol
    * @param opts - Options object.
-   * It must contain either startDate, endDate, and interval properties
-   * or offset and limit (used for pagination) properties.
+   * It must contain either a startDate, an endDate, and interval properties
+   * or an offset and a limit (used for pagination) properties.
    * * opts.startDate: Start time for the time range (date | timestamp | string)
    * * opts.endDate: End time for the time range (date | timestamp | string)
    * * opts.interval: Interval in milliseconds (number)
