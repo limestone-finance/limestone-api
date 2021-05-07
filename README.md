@@ -244,24 +244,23 @@ console.log(price.value);
 ----------------------------------------------
 
 ### Using a custom cache api url
+#### Option 1. Using a setCacheApiUrl method
 ```js
-// Option 1.
-// Using a setCacheApiUrl method
 limestone.setCacheApiUrl("http://localhost:9000/prices");
 limestone.getPrice("AR").then(console.log);
+```
 
-// Option 2.
-// Initialising a new limestone api
-// instance with a cacheApiUrl param
+#### Option 2. Initialising a new limestone api instance with a cacheApiUrl param
+```js
 const limestoneApi = new limestone.LimestoneApi({
   cacheApiUrl: "http://localhost:9000/prices",
 });
 limestoneApi.getPrice("AR").then(console.log);
+```
 
-// To use a custom cache api url with the limestone fluent
-// interface you should pass a cacheApiUrl as an argument
-// of the exec method each time you make a query
-lapi.query().symbol("AR").latest().exec({
+💡 Note: To use a custom cache api url with the limestone fluent interface you should pass a `cacheApiUrl` as an argument of the `exec` method each time you make a query.
+```js
+limestone.query().symbol("AR").latest().exec({
   cacheApiUrl: "http://localhost:9000/prices",
 }).then(console.log);
 ```
