@@ -50,6 +50,10 @@ export default class LimestoneApi {
     );
   }
 
+  setCacheApiUrl(cacheApiUrl: string) {
+    this.cacheProxy.setCacheApiUrl(cacheApiUrl);
+  }
+
   /**
    * Returns the latest price for a single symbol
    *

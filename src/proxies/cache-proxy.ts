@@ -9,6 +9,10 @@ export default class CacheProxy {
     this.cacheApiUrl = cacheApiUrl;
   }
 
+  setCacheApiUrl(cacheApiUrl: string) {
+    this.cacheApiUrl = cacheApiUrl;
+  }
+
   async getPrice(args: {
     symbol: string;
     provider: string;

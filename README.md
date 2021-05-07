@@ -243,6 +243,31 @@ console.log(price.value);
 
 ----------------------------------------------
 
+### Using a custom cache api url
+```js
+// Option 1.
+// Using a setCacheApiUrl method
+limestone.setCacheApiUrl("http://localhost:9000/prices");
+limestone.getPrice("AR").then(console.log);
+
+// Option 2.
+// Initialising a new limestone api
+// instance with a cacheApiUrl param
+const limestoneApi = new limestone.LimestoneApi({
+  cacheApiUrl: "http://localhost:9000/prices",
+});
+limestoneApi.getPrice("AR").then(console.log);
+
+// To use a custom cache api url with the limestone fluent
+// interface you should pass a cacheApiUrl as an argument
+// of the exec method each time you make a query
+lapi.query().symbol("AR").latest().exec({
+  cacheApiUrl: "http://localhost:9000/prices",
+}).then(console.log);
+```
+
+----------------------------------------------
+
 ### Get prices from Arweave
 By default, Limestone API fetches data from the Limestone cache layer. It works way faster than fetching directly from Arweave Blockchain. Even so, thanks to signature verification prices data is still trusted and secure.
 
