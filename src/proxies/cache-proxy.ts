@@ -68,7 +68,7 @@ export default class CacheProxy {
     offset?: number;
     limit?: number;
   }): Promise<PriceDataWithSignature[]> {
-    const params = _.pickBy(args, prop => !_.isUndefined(prop));
+    const params = _.pickBy(args, (prop) => !_.isUndefined(prop));
     const { data } = await axios.get(this.cacheApiUrl, { params });
     return data;
   }

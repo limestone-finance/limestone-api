@@ -1,5 +1,10 @@
 import _ from "lodash";
-import { ConvertableToDate, GetPriceOptions, LimestoneApiConfig, PriceData } from "./types";
+import {
+  ConvertableToDate,
+  GetPriceOptions,
+  LimestoneApiConfig,
+  PriceData,
+} from "./types";
 import LimestoneApi from "./limestone-api";
 
 type QueryParams = {
@@ -184,7 +189,9 @@ export class LimestoneQueryExecutable<QueryResultType> {
    *
    * @returns Promise resolving the query result (result type depends on the query)
    */
-  async exec(limestoneApiConfig?: LimestoneApiConfig): Promise<QueryResultType> {
+  async exec(
+    limestoneApiConfig?: LimestoneApiConfig,
+  ): Promise<QueryResultType> {
     const limestone = new LimestoneApi(limestoneApiConfig);
     const symbols = this.params.symbols;
     if (symbols.length > 0) {
