@@ -1,4 +1,5 @@
 import axios from "axios";
+import _ from "lodash";
 import { PriceDataWithSignature } from "../types";
 
 export default class CacheProxy {
@@ -57,11 +58,14 @@ export default class CacheProxy {
   async getManyPrices(args: {
     symbol: string;
     provider: string;
-    interval: number;
-    fromTimestamp: number;
-    toTimestamp: number;
+    fromTimestamp?: number;
+    toTimestamp?: number;
+    interval?: number;
+    offset?: number;
+    limit?: number;
   }): Promise<PriceDataWithSignature[]> {
-    const { data } = await axios.get(this.cacheApiUrl, { params: args });
+    const params = _.pickBy(args, prop => !_.isUndefined(prop));
+    const { data } = await axios.get(this.cacheApiUrl, { params });
     return data;
   }
 }

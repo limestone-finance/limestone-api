@@ -216,6 +216,18 @@ console.log(prices); // Example output below
 
 💡 Note: `startDate` and `endDate` argument must be convertable to Date type.
 
+### Get prices with pagination
+To fetch prices with pagination specify token symbol as the first argument of the `getHistoricalPrice` method, and `offset` with `limit` as properties of the second argument.
+
+💡 Note: pagination is supported only for a single token.
+
+```js
+const prices = await limestone.getHistoricalPrices("AR", {
+	offset: 1000,
+	limit: 100,
+});
+```
+
 ----------------------------------------------
 
 ### Verify signature
