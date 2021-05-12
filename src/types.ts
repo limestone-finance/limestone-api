@@ -38,13 +38,12 @@ export interface GetHistoricalPriceOptions extends GetPriceOptions {
 }
 
 export type GetHistoricalPriceForSingleTokenOptions =
-  GetHistoricalPriceInTimeRangeOptions
+  | GetHistoricalPriceInTimeRangeOptions
   | GetHistoricalPriceWithPaginationOptions;
 
-
 interface GetHistoricalPriceWithPaginationOptions extends GetPriceOptions {
-  offset: number,
-  limit: number,
+  offset: number;
+  limit: number;
   startDate?: ConvertableToDate;
   endDate?: ConvertableToDate;
   interval?: number; // ms
