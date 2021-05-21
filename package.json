@@ -60,7 +60,7 @@
     "@types/lodash": "^4.14.168",
     "@types/node": "^14.14.33",
     "@types/pako": "^1.0.1",
-    "console-stamp": "^0.2.9",
+    "console-stamp": "^3.0.2",
     "discord.js": "^12.5.1",
     "documentation": "^13.2.5",
     "jest": "^26.6.3",
@@ -75,7 +75,7 @@
   },
   "dependencies": {
     "ar-gql": "^0.0.6",
-    "arweave": "^1.10.11",
+    "arweave": "^1.10.14",
     "axios": "^0.21.1",
     "deep-sort-object": "^1.0.2",
     "lodash": "^4.17.21",
