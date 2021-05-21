@@ -1,4 +1,4 @@
-import Arweave from "arweave/node";
+import Arweave from "arweave";
 
 describe("Test arweave signing and verification", () => {
   const arweaveClient: Arweave = Arweave.init({

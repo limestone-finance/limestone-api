@@ -1,4 +1,4 @@
-import Arweave from "arweave/node";
+import Arweave from "arweave";
 import { run } from "ar-gql";
 import pako from "pako";
 
