@@ -1,3 +1,9 @@
+# DEPRECATED!
+
+## Limestone has become RedStone
+
+Please consider using [redstone-api](https://www.npmjs.com/package/redstone-api) instead.
+
 # Limestone API
 
 [![License](https://img.shields.io/badge/license-MIT-green)](https://choosealicense.com/licenses/mit/)
